@@ -38,10 +38,16 @@ const ForgotPasswordScreen = ({ navigation }) => {
         Alert.alert("Error", "Email not found.");
         return;
       }
-
+      console.log("====================================");
+      console.log(check.userId);
+      console.log("====================================");
       await sendOTP(email); // Gọi API gửi OTP
       Alert.alert("Success", "OTP has been sent to your email.");
-      navigation.navigate("OTPInput", { email: email, password: password }); // Chuyển sang màn hình nhập OTP
+      navigation.navigate("OTPInput", {
+        email: email,
+        password: password,
+        id: check.userId,
+      }); // Chuyển sang màn hình nhập OTP
     } catch (error) {
       Alert.alert("Error", "Failed to send OTP. Please try again.");
       console.error(error);
