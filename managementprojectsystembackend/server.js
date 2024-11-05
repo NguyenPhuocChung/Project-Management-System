@@ -40,6 +40,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/file", express.static(path.join(__dirname, "file")));
 
 app.use("/api/auth", authRoutes);
+app.use((req, res, next) => {
+  console.log("Session at the beginning of the middleware:", req.session);
+  next();
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

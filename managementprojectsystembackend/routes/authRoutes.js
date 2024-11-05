@@ -28,7 +28,6 @@ const {
   otpPassword,
   verifyAndUpdatePassword,
   checkEmailExists,
-  isAuthenticated,
 } = require("../controllers/authController");
 const {
   calendaring,
@@ -58,54 +57,50 @@ router.post("/login", login);
 router.post("/register", register);
 
 // Meeting Routes
-router.post("/create", isAuthenticated, createMeeting);
+router.post("/create", createMeeting);
 
 // Task Routes
-router.post("/addTask", isAuthenticated, addTask);
-router.get("/tasks", isAuthenticated, findAllTasks);
-router.get("/taskById/:id", isAuthenticated, findAllTasksById);
-router.get(
-  "/taskByIdProject/:projectId",
-  isAuthenticated,
-  findAllTasksByProjectId
-);
-router.get("/tasksByInvite/:inviteId", isAuthenticated, getTasksByInvite);
-router.put("/task/:id/status", isAuthenticated, updateTaskStatus);
-router.delete("/deleteTask/:id", isAuthenticated, deleteTasksById);
-router.put("/updateTask/:id", isAuthenticated, updateTasksById);
-router.get("/task/status-summary", isAuthenticated, getTaskStatusSummary);
+router.post("/addTask", addTask);
+router.get("/tasks", findAllTasks);
+router.get("/taskById/:id", findAllTasksById);
+router.get("/taskByIdProject/:projectId", findAllTasksByProjectId);
+router.get("/tasksByInvite/:inviteId", getTasksByInvite);
+router.put("/task/:id/status", updateTaskStatus);
+router.delete("/deleteTask/:id", deleteTasksById);
+router.put("/updateTask/:id", updateTasksById);
+router.get("/task/status-summary", getTaskStatusSummary);
 
 // Project Routes
-router.post("/addProject", isAuthenticated, addProject);
-router.delete("/deleteProject/:id", isAuthenticated, deleteProjectById);
-router.put("/updateProject/:id", isAuthenticated, updateProjectById);
-router.get("/projectsByInvite/:inviteId", isAuthenticated, getProjectsByInvite);
-router.put("/project/:id/status", isAuthenticated, updateProjectStatus);
-router.get("/project/status-summary", isAuthenticated, getStatusSummary);
+router.post("/addProject", addProject);
+router.delete("/deleteProject/:id", deleteProjectById);
+router.put("/updateProject/:id", updateProjectById);
+router.get("/projectsByInvite/:inviteId", getProjectsByInvite);
+router.put("/project/:id/status", updateProjectStatus);
+router.get("/project/status-summary", getStatusSummary);
 
 // Calendaring Routes
-router.get("/calendering/:date", isAuthenticated, calendaring);
-router.get("/getAllCalendering", isAuthenticated, getAllCalendaring);
-router.post("/addCalendaring", isAuthenticated, addCalendaring);
-router.delete("/deleteCalendaring/:id", isAuthenticated, deleteCalendaring);
-router.put("/updateCalendaring/:id", isAuthenticated, updateCalendaring);
+router.get("/calendering/:date", calendaring);
+router.get("/getAllCalendering", getAllCalendaring);
+router.post("/addCalendaring", addCalendaring);
+router.delete("/deleteCalendaring/:id", deleteCalendaring);
+router.put("/updateCalendaring/:id", updateCalendaring);
 
 // Account Routes
-router.get("/projects", isAuthenticated, findProject);
-router.get("/projectsById/:id", isAuthenticated, findProjectById);
-router.get("/invitemember/:userRole", isAuthenticated, findAccountsByRole);
-router.get("/account/:id", isAuthenticated, findAccountsById);
-router.get("/allaccount", isAuthenticated, findAccounts);
-router.put("/upload/:id", isAuthenticated, uploadAvatar);
-router.delete("/deleteAccount/:id", isAuthenticated, deleteAccountById);
-router.put("/account/:id", isAuthenticated, updateAccountsById);
-router.post("/checkPassword/:id", isAuthenticated, checkPassword);
-router.post("/sendOTP", isAuthenticated, otpPassword);
-router.post("/verifyOtp", isAuthenticated, verifyAndUpdatePassword);
-router.post("/checkEmail", isAuthenticated, checkEmailExists);
+router.get("/projects", findProject);
+router.get("/projectsById/:id", findProjectById);
+router.get("/invitemember/:userRole", findAccountsByRole);
+router.get("/account/:id", findAccountsById);
+router.get("/allaccount", findAccounts);
+router.put("/upload/:id", uploadAvatar);
+router.delete("/deleteAccount/:id", deleteAccountById);
+router.put("/account/:id", updateAccountsById);
+router.post("/checkPassword/:id", checkPassword);
+router.post("/sendOTP", otpPassword);
+router.post("/verifyOtp", verifyAndUpdatePassword);
+router.post("/checkEmail", checkEmailExists);
 
 // Comment Routes
-router.get("/comment/:idTask", isAuthenticated, getCommentsByTask);
-router.post("/addComment", isAuthenticated, addComment);
+router.get("/comment/:idTask", getCommentsByTask);
+router.post("/addComment", addComment);
 
 module.exports = router;

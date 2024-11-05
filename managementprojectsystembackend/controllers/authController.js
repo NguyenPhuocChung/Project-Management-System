@@ -3,11 +3,13 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken"); // Import JWT library
 require("dotenv").config(); // Đảm bảo rằng dòng này được thêm vào đầu file
+const session = require("express-session");
+
 //
 const isAuthenticated = (req, res, next) => {
-  const token = req.session.token; // Lấy token từ session
+  const token = req.session.UserToken; // Lấy token từ session
   console.log("Token in session:", token);
-  console.log("Session data in route:", req.session);
+  console.log("Session data in route:", req.session.UserToken);
 
   if (!token) {
     return res
@@ -117,6 +119,7 @@ const register = async (req, res) => {
       .status(201)
       .json({ message: "User registered successfully", user: { role, email } });
   } catch (error) {
+    a;
     console.error("Error during registration:", error);
     res.status(500).json({ message: "Server error", error });
   }
@@ -154,9 +157,9 @@ const login = async (req, res) => {
     );
 
     // Lưu token vào session
-    req.session.token = token; // Lưu token vào session
-    console.log("User logged in, storing in session:", req.session.token);
+    req.session.UserToken = token; // Lưu token vào session
 
+    console.log("User logged in, storing in session:", req.session.UserToken);
     res.status(200).json({
       message: "Login successful",
       user: { id: user._id, email, role: user.role },

@@ -37,7 +37,8 @@ export const login = async (role, email, password) => {
       await AsyncStorage.setItem("userRole", userRole);
       await AsyncStorage.setItem("userId", userID);
       await AsyncStorage.setItem("expiration", expiration.toString());
-
+      // await AsyncStorage.setItem("userToken", response.data.token);
+      // console.log("Đăng nhập thành công:", response.data);
       return { userData, userRole };
     }
   } catch (error) {
