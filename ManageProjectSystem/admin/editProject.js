@@ -141,7 +141,8 @@ const EditProject = ({ route, navigation }) => {
       const response = await getAllAccounts();
       if (Array.isArray(response)) {
         const data = response.map((account) => ({
-          label: account.fullName || "Not updated profile",
+          label:
+            account.fullName + ` (${account.role})` || "Not updated profile",
           value: account._id,
         }));
         setInvitePeople(data);

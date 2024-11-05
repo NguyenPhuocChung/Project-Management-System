@@ -74,7 +74,8 @@ const EditTask = () => {
 
       if (Array.isArray(response)) {
         const data = response.map((account) => ({
-          label: account.fullName || "Not update profile",
+          label:
+            account.fullName + ` (${account.role})` || "Not update profile",
           value: account._id,
         }));
         setInvitePeople(data);

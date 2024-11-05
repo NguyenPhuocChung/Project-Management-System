@@ -131,7 +131,8 @@ const CreateTask = () => {
       if (Array.isArray(response)) {
         // Gán mảng invitePeople
         const data = response.map((account) => ({
-          label: account.fullName || "Not update profile", // Use fullName, provide a fallback
+          label:
+            account.fullName + ` (${account.role})` || "Not update profile", // Use fullName, provide a fallback
           value: account._id, // Using _id as value
         }));
         setInvitePeople(data); // Cập nhật state invitePeople
