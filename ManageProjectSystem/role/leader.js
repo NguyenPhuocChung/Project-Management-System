@@ -13,6 +13,8 @@ import {
   View,
 } from "react-native";
 import { fetchAccount } from "../api/apiservice";
+import { logout } from "../api/authService";
+
 import HomeLeader from "../leader/Home";
 
 const Leader = () => {
@@ -71,7 +73,7 @@ const Leader = () => {
       await AsyncStorage.removeItem("userRole");
       await AsyncStorage.removeItem("userPassword");
       console.log("Signed out");
-
+      await logout();
       // Navigate to the Login screen
       navigation.navigate("Login");
     } catch (error) {

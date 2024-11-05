@@ -87,3 +87,11 @@ export const verifyOtp = async (otp, id, password) => {
     throw error;
   }
 };
+export const logout = async () => {
+  try {
+    const response = await axios.post(`${BASE_URL}/logout`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -11,10 +11,10 @@ const path = require("path");
 const session = require("express-session");
 app.use(
   session({
-    secret: "your-secret-key", // Thay bằng khóa bí mật của bạn
+    secret: "jhghgfhv765435678@#$%^&*jhgfgghjjkh765456",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Nếu sử dụng HTTPS, hãy đặt thành true
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // 1 day
   })
 );
 

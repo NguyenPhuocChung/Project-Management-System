@@ -28,6 +28,7 @@ const {
   otpPassword,
   verifyAndUpdatePassword,
   checkEmailExists,
+  isAuthenticated,
 } = require("../controllers/authController");
 const {
   calendaring,
@@ -41,71 +42,70 @@ const {
   updateAccountsById,
   findAccounts,
   uploadAvatar,
+  findAccountsByRole,
+  deleteAccountById,
 } = require("../controllers/accountController");
 const {
   getCommentsByTask,
   addComment,
 } = require("../controllers/commentController");
+
 const app = express();
-const {
-  findAccountsByRole,
-  findAccountsByLeaderRole,
-  findAccountsByMemberRole,
-  deleteAccountById,
-} = require("../controllers/accountController");
-// Route đăng nhập
 const router = express.Router();
+
+// Authentication Routes
 router.post("/login", login);
-router.post("/create", createMeeting);
-//
-router.post("/addTask", addTask);
-router.get("/tasks", findAllTasks);
-router.get("/taskById/:id", findAllTasksById);
-router.get("/taskByIdProject/:projectId", findAllTasksByProjectId);
-router.get("/tasksByInvite/:inviteId", getTasksByInvite);
-router.put("/task/:id/status", updateTaskStatus); // Sử dụng PATCH cho việc cập nhật một phần
-
-router.delete("/deleteTask/:id", deleteTasksById);
-router.put("/updateTask/:id", updateTasksById);
-router.get("/task/status-summary", getTaskStatusSummary);
-
-//
-router.post("/addProject", addProject);
-router.delete("/deleteProject/:id", deleteProjectById);
-router.put("/updateProject/:id", updateProjectById);
-router.get("/projectsByInvite/:inviteId", getProjectsByInvite);
-router.put("/project/:id/status", updateProjectStatus); // Sử dụng PATCH cho việc cập nhật một phần
-router.get("/project/status-summary", getStatusSummary);
-
-//
-router.get("/calendering/:date", calendaring);
-router.get("/getAllCalendering", getAllCalendaring);
-
-router.post("/addCalendaring", addCalendaring);
-router.delete("/deleteCalendaring/:id", deleteCalendaring);
-router.put("/updateCalendaring/:id", updateCalendaring);
-
-//
-router.get("/projects", findProject);
-router.get("/projectsById/:id", findProjectById);
-//
-router.get("/invitemember/:userRole", findAccountsByRole);
-router.get("/account/:id", findAccountsById);
-router.get("/allaccount", findAccounts);
-router.put("/upload/:id", uploadAvatar);
-
-//
 router.post("/register", register);
-router.delete("/deleteAccount/:id", deleteAccountById);
-router.put("/account/:id", updateAccountsById);
-router.post("/checkPassword/:id", checkPassword);
-router.post("/sendOTP", otpPassword);
-router.post("/verifyOtp", verifyAndUpdatePassword);
-router.post("/checkEmail", checkEmailExists);
 
-//
-// router.post("/addComment", createComment);
-router.get("/comment/:idTask", getCommentsByTask);
-router.post("/addComment", addComment);
+// Meeting Routes
+router.post("/create", isAuthenticated, createMeeting);
+
+// Task Routes
+router.post("/addTask", isAuthenticated, addTask);
+router.get("/tasks", isAuthenticated, findAllTasks);
+router.get("/taskById/:id", isAuthenticated, findAllTasksById);
+router.get(
+  "/taskByIdProject/:projectId",
+  isAuthenticated,
+  findAllTasksByProjectId
+);
+router.get("/tasksByInvite/:inviteId", isAuthenticated, getTasksByInvite);
+router.put("/task/:id/status", isAuthenticated, updateTaskStatus);
+router.delete("/deleteTask/:id", isAuthenticated, deleteTasksById);
+router.put("/updateTask/:id", isAuthenticated, updateTasksById);
+router.get("/task/status-summary", isAuthenticated, getTaskStatusSummary);
+
+// Project Routes
+router.post("/addProject", isAuthenticated, addProject);
+router.delete("/deleteProject/:id", isAuthenticated, deleteProjectById);
+router.put("/updateProject/:id", isAuthenticated, updateProjectById);
+router.get("/projectsByInvite/:inviteId", isAuthenticated, getProjectsByInvite);
+router.put("/project/:id/status", isAuthenticated, updateProjectStatus);
+router.get("/project/status-summary", isAuthenticated, getStatusSummary);
+
+// Calendaring Routes
+router.get("/calendering/:date", isAuthenticated, calendaring);
+router.get("/getAllCalendering", isAuthenticated, getAllCalendaring);
+router.post("/addCalendaring", isAuthenticated, addCalendaring);
+router.delete("/deleteCalendaring/:id", isAuthenticated, deleteCalendaring);
+router.put("/updateCalendaring/:id", isAuthenticated, updateCalendaring);
+
+// Account Routes
+router.get("/projects", isAuthenticated, findProject);
+router.get("/projectsById/:id", isAuthenticated, findProjectById);
+router.get("/invitemember/:userRole", isAuthenticated, findAccountsByRole);
+router.get("/account/:id", isAuthenticated, findAccountsById);
+router.get("/allaccount", isAuthenticated, findAccounts);
+router.put("/upload/:id", isAuthenticated, uploadAvatar);
+router.delete("/deleteAccount/:id", isAuthenticated, deleteAccountById);
+router.put("/account/:id", isAuthenticated, updateAccountsById);
+router.post("/checkPassword/:id", isAuthenticated, checkPassword);
+router.post("/sendOTP", isAuthenticated, otpPassword);
+router.post("/verifyOtp", isAuthenticated, verifyAndUpdatePassword);
+router.post("/checkEmail", isAuthenticated, checkEmailExists);
+
+// Comment Routes
+router.get("/comment/:idTask", isAuthenticated, getCommentsByTask);
+router.post("/addComment", isAuthenticated, addComment);
 
 module.exports = router;

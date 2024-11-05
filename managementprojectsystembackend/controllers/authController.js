@@ -1,7 +1,31 @@
 const User = require("../models/accountModel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken"); // Import JWT library
+require("dotenv").config(); // Đảm bảo rằng dòng này được thêm vào đầu file
+const isAuthenticated = (req, res, next, token) => {
+  console.log("Token in session:", token); // Debug log
+  console.log("Session data in route:", req.session);
 
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized access: No token provided" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      console.error("Token verification error:", err); // Log lỗi để kiểm tra
+      return res
+        .status(401)
+        .json({ message: "Unauthorized access: Invalid token" });
+    }
+
+    req.user = decoded; // Lưu thông tin người dùng đã xác thực vào req
+    console.log("Decoded user:", req.user); // Log thông tin người dùng đã xác thực
+    next(); // Proceed to the next middleware or route handler
+  });
+};
 // Hàm gửi OTP qua email
 const sendOTP = async (to, otp) => {
   const transporter = nodemailer.createTransport({
@@ -123,10 +147,22 @@ const login = async (req, res) => {
         .json({ message: "Invalid email or password or role" });
     }
 
-    // Nếu thành công, trả về thông báo đăng nhập thành công
+    // Tạo JWT token
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // Lưu token vào session
+    req.session.token = token; // Lưu token vào session
+
+    console.log("User logged in, storing in session:", req.session.token);
+    isAuthenticated(req.session.token);
     res.status(200).json({
       message: "Login successful",
       user: { id: user._id, email, role: user.role },
+      token, // Gửi token về phía client (tuỳ chọn)
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -243,12 +279,22 @@ const checkEmailExists = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
-
+const logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error during logout:", err);
+      return res.status(500).json({ message: "Failed to logout" });
+    }
+    res.status(200).json({ message: "Logout successful" });
+  });
+};
 module.exports = {
+  logout,
   register,
   login,
   checkPassword,
   otpPassword,
   verifyAndUpdatePassword,
   checkEmailExists,
+  isAuthenticated,
 };
