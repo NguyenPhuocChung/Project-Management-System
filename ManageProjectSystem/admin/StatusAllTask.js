@@ -162,7 +162,7 @@ const StatusAllTask = ({ navigation }) => {
             onRefresh={task} // Hàm gọi lại khi kéo refresh
           />
         }
-        style={{ marginBottom: 340 }}
+        style={{ marginBottom: 150 }}
       />
     </SafeAreaView>
   );

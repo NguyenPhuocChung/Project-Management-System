@@ -254,6 +254,15 @@ const Manage_task_status_member = ({ navigation }) => {
             opened this issue on {timeCreateAt}
           </Text>
         </View>
+        <Text
+          style={[
+            styles.font_size_name,
+            statusmember.underline,
+            { fontStyle: "italic" },
+          ]}
+        >
+          Join: {data.invite.fullName}
+        </Text>
         <View style={[Generate.d_flex_align_center, { gap: 10 }]}>
           <View style={[Generate.d_flex_align_center, { gap: 10 }]}>
             <Text style={[styles.font_size_name, { color: "#67166E" }]}>

@@ -39,7 +39,6 @@ const AccountDetail = () => {
     birthDate: null,
     address: null,
     phone: null,
-    email: null,
     position: null,
     department: null,
   });
@@ -75,7 +74,6 @@ const AccountDetail = () => {
         birthDate: accountData.birthDate || null,
         address: accountData.address || null,
         phone: accountData.phone || null,
-        email: accountData.email || null,
         position: accountData.position || null,
         department: accountData.department || null,
       });
@@ -225,7 +223,6 @@ const AccountDetail = () => {
           {renderDetail("Birth Date", account.birthDate || "N/A", "event")}
           {renderDetail("Address", account.address || "N/A", "location-on")}
           {renderDetail("Phone", account.phone || "N/A", "phone")}
-          {renderDetail("Email", account.email, "email")}
           {renderDetail("Position", account.position || "N/A", "work")}
           {renderDetail("Department", account.department || "N/A", "business")}
           {renderDetail("Start Date", account.startDate || "N/A", "date-range")}

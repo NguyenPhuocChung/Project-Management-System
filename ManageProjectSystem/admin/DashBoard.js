@@ -19,8 +19,8 @@ const Dashboard = () => {
       try {
         const result = await getStatusSummary();
         setData({
-          completed: result.ongoing || 0,
-          inProgress: result.progress || 0,
+          completed: result.Done || 0,
+          inProgress: result.ongoing || 0,
           notStarted: result.notStarted || 0,
         });
       } catch (error) {

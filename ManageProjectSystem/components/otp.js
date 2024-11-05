@@ -1,15 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { verifyOtp } from "../api/authService";
 const OTPInputScreen = () => {
   const navigation = useNavigation();
@@ -64,17 +55,6 @@ const OTPInputScreen = () => {
         onChangeText={setOtp}
       />
       <Button title="Verify OTP" onPress={handleVerifyOTP} color="#4CAF50" />
-      <View style={styles.resendContainer}>
-        <TouchableOpacity onPress={handleResendOTP} disabled={isLoading}>
-          <View style={[styles.button, isLoading && styles.loadingButton]}>
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Resend OTP</Text>
-            )}
-          </View>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
