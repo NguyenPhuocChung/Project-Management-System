@@ -27,6 +27,7 @@ const {
   checkPassword,
   otpPassword,
   verifyAndUpdatePassword,
+  checkEmailExists,
 } = require("../controllers/authController");
 const {
   calendaring,
@@ -100,6 +101,7 @@ router.put("/account/:id", updateAccountsById);
 router.post("/checkPassword/:id", checkPassword);
 router.post("/sendOTP", otpPassword);
 router.post("/verifyOtp", verifyAndUpdatePassword);
+router.post("/checkEmail", checkEmailExists);
 
 //
 // router.post("/addComment", createComment);

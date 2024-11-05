@@ -55,6 +55,16 @@ export const checkPassword = async (id, password) => {
     throw error;
   }
 };
+export const checkEmail = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/checkEmail`, {
+      email: email,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 export const sendOTP = async (email) => {
   try {
     const response = await axios.post(`${BASE_URL}/sendOTP/`, {

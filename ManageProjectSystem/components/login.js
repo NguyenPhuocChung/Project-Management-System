@@ -22,6 +22,7 @@ const Login = ({ navigation }) => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isAsyn, setisAsyn] = useState(false);
+
   const loadData = async () => {
     try {
       const storedEmail = await AsyncStorage.getItem("userEmail");
@@ -157,6 +158,16 @@ const Login = ({ navigation }) => {
       </View>
 
       <Button title="Login" onPress={handleLogin} />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ForgotPassword");
+        }}
+        style={{ textAlign: "center", marginVertical: 10 }}
+      >
+        <Text style={{ textAlign: "center", textDecorationLine: "underline" }}>
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

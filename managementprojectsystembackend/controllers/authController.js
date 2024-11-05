@@ -218,6 +218,31 @@ const verifyAndUpdatePassword = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+//
+// Hàm kiểm tra email
+const checkEmailExists = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email not found" });
+    }
+
+    // Trả về ID và thông báo khi email tồn tại
+    res.status(200).json({
+      message: "Email exists",
+      userId: user._id, // Lấy ID người dùng
+    });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 
 module.exports = {
   register,
@@ -225,4 +250,5 @@ module.exports = {
   checkPassword,
   otpPassword,
   verifyAndUpdatePassword,
+  checkEmailExists,
 };

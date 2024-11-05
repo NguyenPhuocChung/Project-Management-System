@@ -32,7 +32,7 @@ const OTPInputScreen = () => {
       if (verify) {
         Alert.alert("Success", "OTP verified successfully!");
         // Xử lý khi OTP đã xác
-        navigation.navigate("Account");
+        navigation.navigate("Login");
       } else {
         Alert.alert("Error", "Invalid OTP. Please try again!");
       }

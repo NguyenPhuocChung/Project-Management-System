@@ -20,6 +20,7 @@ import CommentSystem from "./components/Comment";
 import DetailDailyMeeting from "./components/DetaildailyMeeting";
 import Footer from "./components/Footer";
 import Invite from "./components/Invite";
+import ForgotPasswordScreen from "./components/forgetPassword";
 import Login from "./components/login";
 import Notifications from "./components/notification";
 import OTPInputScreen from "./components/otp";
@@ -134,6 +135,7 @@ const MainScreen = () => {
         <Stack.Screen name="Notification" component={Notifications} />
         <Stack.Screen name="UpdatePassword" component={UpdatePasswordScreen} />
         <Stack.Screen name="OTPInput" component={OTPInputScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       </Stack.Navigator>
       {showFooter && <Footer />}
     </View>
