@@ -239,8 +239,10 @@ const verifyAndUpdatePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Cập nhật mật khẩu trong cơ sở dữ liệu
-    await User.findByIdAndUpdate(id, { password: hashedPassword });
-
+    const user = await User.findByIdAndUpdate(id, { password: hashedPassword });
+    console.log("====================================");
+    console.log(password, hashedPassword, user);
+    console.log("====================================");
     // Xóa session
     req.session.destroy((err) => {
       if (err) {
@@ -250,6 +252,9 @@ const verifyAndUpdatePassword = async (req, res) => {
     });
 
     res.status(200).json({ message: "Password updated successfully!" });
+    console.log("====================================");
+    console.log("thành công");
+    console.log("====================================");
   } catch (error) {
     console.error("Error during password update:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -275,6 +280,9 @@ const checkEmailExists = async (req, res) => {
       message: "Email exists",
       userId: user._id, // Lấy ID người dùng
     });
+    console.log("====================================");
+    console.log(user._id);
+    console.log("====================================");
   } catch (error) {
     console.error("Error checking email:", error);
     res.status(500).json({ message: "Server error", error });

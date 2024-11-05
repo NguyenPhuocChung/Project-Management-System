@@ -41,7 +41,6 @@ const AccountDetail = () => {
     phone: null,
     email: null,
     position: null,
-    role: null,
     department: null,
   });
 
@@ -78,7 +77,6 @@ const AccountDetail = () => {
         phone: accountData.phone || null,
         email: accountData.email || null,
         position: accountData.position || null,
-        role: accountData.role || null,
         department: accountData.department || null,
       });
       setError(null);
@@ -229,7 +227,6 @@ const AccountDetail = () => {
           {renderDetail("Phone", account.phone || "N/A", "phone")}
           {renderDetail("Email", account.email, "email")}
           {renderDetail("Position", account.position || "N/A", "work")}
-          {renderDetail("Role", account.role, "supervisor-account")}
           {renderDetail("Department", account.department || "N/A", "business")}
           {renderDetail("Start Date", account.startDate || "N/A", "date-range")}
         </View>

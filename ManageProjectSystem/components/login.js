@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -22,6 +24,7 @@ const Login = ({ navigation }) => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isAsyn, setisAsyn] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     try {
@@ -29,9 +32,9 @@ const Login = ({ navigation }) => {
       const storedRole = await AsyncStorage.getItem("userRole");
       const storedPassword = await AsyncStorage.getItem("userPassword");
 
-      console.log("Stored Email:", storedEmail); // Kiểm tra email
-      console.log("Stored Role:", storedRole); // Kiểm tra role
-      console.log("Stored Password:", storedPassword); // Kiểm tra password
+      console.log("Stored Email:", storedEmail);
+      console.log("Stored Role:", storedRole);
+      console.log("Stored Password:", storedPassword);
 
       if (storedEmail !== null) setEmail(storedEmail);
       if (storedRole !== null) setRole(storedRole);
@@ -46,22 +49,19 @@ const Login = ({ navigation }) => {
     loadData();
   }, []);
 
-  // useEffect để tự động đăng nhập khi có đủ thông tin
   useEffect(() => {
     if (isAsyn) {
-      handleLogin(); // Gọi hàm đăng nhập
+      handleLogin(); // Auto login when data is loaded
     }
-  }, [isAsyn]); // Chạy khi các giá trị thay đổi
+  }, [isAsyn]);
 
   const handleLogin = async () => {
     setIsLoading(true);
-
-    // Kiểm tra các giá trị trước khi gọi API
     if (!email || !role || !password) {
       setErrorVisible(true);
       console.log("Email, role, and password must be provided");
       setIsLoading(false);
-      return; // Dừng lại nếu thiếu thông tin
+      return;
     }
 
     try {
@@ -93,6 +93,12 @@ const Login = ({ navigation }) => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  };
+
   const handleClose = () => {
     setErrorVisible(false);
   };
@@ -111,7 +117,12 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
       <Text style={styles.title}>Login</Text>
       <Dialog.Container visible={errorVisible}>
         <Dialog.Title style={{ color: "red" }}>Error</Dialog.Title>
@@ -168,7 +179,7 @@ const Login = ({ navigation }) => {
           Forgot Password?
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -198,7 +209,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-
 const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     height: 50,

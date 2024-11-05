@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   box_main_task: {
     width: "auto",
     height: "auto",
+    marginBottom: 90,
   },
   background_color: {
     backgroundColor: "#F5F5F5",
