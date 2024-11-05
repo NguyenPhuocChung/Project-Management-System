@@ -44,3 +44,36 @@ export const login = async (role, email, password) => {
     throw error.response ? error.response.data : new Error("Login failed");
   }
 };
+
+export const checkPassword = async (id, password) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/checkPassword/${id}`, {
+      password: password,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const sendOTP = async (email) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/sendOTP/`, {
+      email: email,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const verifyOtp = async (otp, id, password) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/verifyOtp/`, {
+      otp: otp,
+      id: id,
+      password: password,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

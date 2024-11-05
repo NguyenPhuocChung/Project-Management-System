@@ -128,8 +128,22 @@ const Calendaring = ({ navigation }) => {
     const startTime = item.startTime ? new Date(item.startTime) : null;
     const endTime = item.endTime ? new Date(item.endTime) : null;
 
-    const startTimeChanged = startTime ? startTime.toLocaleTimeString() : "N/A";
-    const endTimeChanged = endTime ? endTime.toLocaleTimeString() : "N/A";
+    // Định dạng thời gian theo HH:mm
+    const startTimeChanged = startTime
+      ? startTime.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+      : "N/A";
+
+    const endTimeChanged = endTime
+      ? endTime.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })
+      : "N/A";
 
     return (
       <View style={[GenerateStyles.d_flex, GenerateStyles.marginVertical]}>
@@ -189,7 +203,6 @@ const Calendaring = ({ navigation }) => {
           >
             {item.description}
           </Text>
-
           <TouchableOpacity
             style={[
               CalenderingStyle.buttonMeeting,
@@ -289,7 +302,7 @@ const Calendaring = ({ navigation }) => {
               onPress={() => {
                 navigation.navigate("AddEvent", {
                   name: "AddEvent",
-                  startDate: selectedDate,
+                  startDate: selectedDate.toISOString(),
                 });
               }}
             >

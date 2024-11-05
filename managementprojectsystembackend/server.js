@@ -8,6 +8,15 @@ const bodyParser = require("body-parser"); // nếu bạn sử dụng body-parse
 const URL = require("./middlewares/authMiddleware");
 const app = express();
 const path = require("path");
+const session = require("express-session");
+app.use(
+  session({
+    secret: "your-secret-key", // Thay bằng khóa bí mật của bạn
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Nếu sử dụng HTTPS, hãy đặt thành true
+  })
+);
 
 // const { findAccountsById } = require("./controllers/accountController");
 // const accountController = require("./controllers/accountController");

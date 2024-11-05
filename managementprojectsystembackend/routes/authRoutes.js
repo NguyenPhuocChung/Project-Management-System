@@ -21,7 +21,13 @@ const {
   updateTaskStatus,
   getTaskStatusSummary,
 } = require("../controllers/taskController");
-const { login, register } = require("../controllers/authController");
+const {
+  login,
+  register,
+  checkPassword,
+  otpPassword,
+  verifyAndUpdatePassword,
+} = require("../controllers/authController");
 const {
   calendaring,
   addCalendaring,
@@ -91,6 +97,9 @@ router.put("/upload/:id", uploadAvatar);
 router.post("/register", register);
 router.delete("/deleteAccount/:id", deleteAccountById);
 router.put("/account/:id", updateAccountsById);
+router.post("/checkPassword/:id", checkPassword);
+router.post("/sendOTP", otpPassword);
+router.post("/verifyOtp", verifyAndUpdatePassword);
 
 //
 // router.post("/addComment", createComment);

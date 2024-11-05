@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import React, { useCallback, useState } from "react";
@@ -25,6 +25,8 @@ import { fetchAccount, updateAccount } from "../api/accountService";
 import URL from "../midleware/authMidleware";
 
 const AccountDetail = () => {
+  const navigation = useNavigation();
+
   const [image, setImage] = useState(null);
   const [id, setId] = useState("");
   const [account, setAccount] = useState({});
@@ -237,7 +239,19 @@ const AccountDetail = () => {
         >
           <Text style={styles.editButtonText}>Edit Account</Text>
         </TouchableOpacity>
-
+        <TouchableOpacity
+          style={styles.passwordButton}
+          onPress={() => {
+            navigation.navigate("UpdatePassword", {
+              name: "UpdatePassword",
+              id,
+              fullName: account.fullName,
+              email: account.email,
+            });
+          }}
+        >
+          <Text style={styles.editButtonText}>Update password</Text>
+        </TouchableOpacity>
         <Modal
           visible={visible}
           animationType="slide"
@@ -322,6 +336,13 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: "#6200ee",
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  passwordButton: {
+    backgroundColor: "#333333",
     padding: 12,
     borderRadius: 8,
     marginTop: 20,

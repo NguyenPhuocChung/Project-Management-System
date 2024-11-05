@@ -283,14 +283,6 @@ const AddEvent = ({ navigation }) => {
         >
           <Text style={AddEventStyles.addButtonText}>Add</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            // Logic to close the modal
-          }}
-          style={AddEventStyles.closeButton}
-        >
-          <Text style={AddEventStyles.closeButtonText}>Close</Text>
-        </TouchableOpacity>
       </ScrollView>
     </View>
   );

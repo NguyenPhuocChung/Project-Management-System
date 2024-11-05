@@ -22,6 +22,8 @@ import Footer from "./components/Footer";
 import Invite from "./components/Invite";
 import Login from "./components/login";
 import Notifications from "./components/notification";
+import OTPInputScreen from "./components/otp";
+import UpdatePasswordScreen from "./components/updatePassword";
 import CreateTask from "./leader/CreateTask";
 import DashboardLeader from "./leader/DashBoardLeader";
 import HomeLeader from "./leader/Home";
@@ -70,13 +72,7 @@ const MainScreen = () => {
           component={Chat}
         />
         {/* Manage */}
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-          name="DashBoard"
-          component={Dashboard}
-        />
+        <Stack.Screen name="DashBoard" component={Dashboard} />
         <Stack.Screen name="Project" component={ManageProject} />
         <Stack.Screen name="CreateProject" component={CreateProject} />
         <Stack.Screen name="EditProject" component={EditProject} />
@@ -136,8 +132,9 @@ const MainScreen = () => {
         {/* Memeber */}
         <Stack.Screen name="TaskMember" component={ListTaskMember} />
         <Stack.Screen name="Notification" component={Notifications} />
+        <Stack.Screen name="UpdatePassword" component={UpdatePasswordScreen} />
+        <Stack.Screen name="OTPInput" component={OTPInputScreen} />
       </Stack.Navigator>
-
       {showFooter && <Footer />}
     </View>
   );
