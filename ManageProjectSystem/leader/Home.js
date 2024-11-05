@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -15,6 +15,7 @@ import {
 const Home = () => {
   const navigation = useNavigation();
   const lineWidth = useRef(new Animated.Value(0)).current;
+  const [refreshing, setRefreshing] = useState(false);
 
   // Dữ liệu cho danh sách
   const sections = [
@@ -72,6 +73,17 @@ const Home = () => {
     return () => backHandler.remove();
   }, [navigation, lineWidth]);
 
+  // Hàm làm mới dữ liệu
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Giả lập thời gian làm mới (thay bằng logic thực tế)
+    setTimeout(() => {
+      setRefreshing(false);
+      console.log("Data refreshed");
+      // Có thể cập nhật lại dữ liệu tại đây
+    }, 2000);
+  };
+
   // Sử dụng useFocusEffect để reload dữ liệu khi màn hình được focus
   useFocusEffect(
     React.useCallback(() => {
@@ -96,6 +108,8 @@ const Home = () => {
         keyExtractor={(item) => item.title}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
+        onRefresh={onRefresh} // Thêm hàm làm mới
+        refreshing={refreshing} // Trạng thái làm mới
       />
     </View>
   );

@@ -58,6 +58,10 @@ const findAllTasks = async (req, res) => {
     const tasks = await Task.find().populate("invite");
     // Lấy tất cả các tác vụ
     res.status(200).json(tasks); // Trả về danh sách tác vụ
+    if (!tasks || tasks.length === 0) {
+      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
+      return res.status(200).json({ message: "No tasks found", tasks: [] });
+    }
     console.log(tasks); // In danh sách tác vụ ra màn hình
   } catch (error) {
     console.error("Error finding tasks:", error);
@@ -73,6 +77,10 @@ const findAllTasksById = async (req, res) => {
       .populate("createrBy", "fullName");
 
     // Lấy tất cả các tác vụ
+    if (!tasks || tasks.length === 0) {
+      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
+      return res.status(200).json({ message: "No tasks found", tasks: [] });
+    }
     res.status(200).json(tasks); // Trả về danh sách tác vụ
     console.log(tasks); // In danh sách tác vụ ra màn hình
   } catch (error) {

@@ -22,7 +22,9 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // New state for password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordComfirm, setShowPasswordComfirm] = useState(false); // New state for password visibility
+  // New state for password visibility
   const navigation = useNavigation();
 
   const isValidEmail = (email) => {
@@ -140,7 +142,7 @@ const Register = () => {
               secureTextEntry={!showPassword} // Toggle secure entry for confirm
             />
             <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
+              onPress={() => setShowPassword(!setConfirmPassword)}
               style={styles.showButton}
             >
               <Icon

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
@@ -13,6 +13,7 @@ import {
 const Home = () => {
   const navigation = useNavigation();
   const lineWidth = useRef(new Animated.Value(0)).current;
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     Animated.timing(lineWidth, {
@@ -21,6 +22,14 @@ const Home = () => {
       useNativeDriver: false,
     }).start();
   }, [lineWidth]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Giả lập việc tải dữ liệu mới
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
 
   const sections = [
     {
@@ -96,6 +105,8 @@ const Home = () => {
           keyExtractor={(item) => item.title}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 20 }}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
         />
       </View>
     </View>

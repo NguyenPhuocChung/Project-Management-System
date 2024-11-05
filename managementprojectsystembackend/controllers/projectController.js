@@ -132,7 +132,9 @@ const findProjectById = async (req, res) => {
 // Controller lấy project theo ID invite
 const getProjectsByInvite = async (req, res) => {
   const inviteId = req.params.inviteId; // Lấy invite ID từ URL params
-
+  console.log("====================================");
+  console.log(inviteId);
+  console.log("====================================");
   try {
     // Tìm tất cả các project có invite chứa inviteId
     const projects = await Project.find({ invite: inviteId })
@@ -140,9 +142,10 @@ const getProjectsByInvite = async (req, res) => {
       .populate("invite", "fullName");
 
     if (!projects || projects.length === 0) {
+      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
       return res
-        .status(404)
-        .json({ message: "No projects found for this invite." });
+        .status(200)
+        .json({ message: "No projects found", projects: [] });
     }
 
     res.status(200).json(projects);

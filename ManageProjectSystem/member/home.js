@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
@@ -13,6 +13,7 @@ import {
 const Home = () => {
   const navigation = useNavigation();
   const lineWidth = useRef(new Animated.Value(0)).current; // Khởi tạo Animated.Value
+  const [refreshing, setRefreshing] = useState(false); // State để theo dõi trạng thái refreshing
 
   // Dữ liệu cho FlatList
   const sections = [
@@ -37,6 +38,15 @@ const Home = () => {
     }).start();
   }, [lineWidth]);
 
+  // Hàm thực hiện khi kéo để làm mới
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Giả lập việc làm mới dữ liệu trong 1 giây
+    setTimeout(() => {
+      setRefreshing(false); // Đặt lại trạng thái refreshing
+    }, 1000);
+  };
+
   const renderSection = ({ item }) => (
     <Section title={item.title}>
       <IconCard
@@ -58,6 +68,8 @@ const Home = () => {
           renderItem={renderSection}
           keyExtractor={(item) => item.title} // Sử dụng title làm key
           showsVerticalScrollIndicator={false} // Ẩn thanh cuộn dọc
+          onRefresh={onRefresh} // Thêm hàm onRefresh
+          refreshing={refreshing} // Truyền trạng thái refreshing
         />
 
         {/* Đường kẻ ngang với animation */}
