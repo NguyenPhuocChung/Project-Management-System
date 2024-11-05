@@ -40,11 +40,11 @@ const register = async (req, res) => {
 
   try {
     // Kiểm tra xem người dùng đã tồn tại chưa
-    const existingUser = await User.findOne({ role, email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
         .status(409)
-        .json({ message: "User with this role already exists" });
+        .json({ message: "User with this email already exists" });
     }
 
     // Mã hóa mật khẩu trước khi lưu

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/FontAwesome"; // Importing FontAwesome icons
 import { getStatusSummary } from "../api/taskService";
 
 const screenWidth = Dimensions.get("window").width;
@@ -53,7 +54,7 @@ const DashboardLeader = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Dashboard</Text>
 
-        {/* Thêm thanh tiến trình ngang */}
+        {/* Progress bar */}
         <View style={styles.progressContainer}>
           <Text style={styles.progressText}>
             Tiến độ hoàn thành: {completedPercentage}%
@@ -65,7 +66,7 @@ const DashboardLeader = () => {
           </View>
         </View>
 
-        {/* Thêm thông tin tóm tắt */}
+        {/* Summary */}
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryText}>
             Tổng số công việc: {totalTasks}
@@ -81,7 +82,7 @@ const DashboardLeader = () => {
           </Text>
         </View>
 
-        {/* Biểu đồ cột */}
+        {/* Chart or No Data Message */}
         {totalTasks > 0 ? (
           <BarChart
             data={chartData}
@@ -106,7 +107,10 @@ const DashboardLeader = () => {
             style={styles.chart}
           />
         ) : (
-          <Text style={styles.noDataText}>Không có dữ liệu để hiển thị</Text>
+          <View style={styles.noDataContainer}>
+            <Icon name="exclamation-circle" size={50} color="#e74c3c" />
+            <Text style={styles.noDataText}>Không có dữ liệu để hiển thị</Text>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -156,10 +160,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#2c3e50",
   },
+  noDataContainer: {
+    alignItems: "center",
+    marginTop: 16,
+  },
   noDataText: {
     fontSize: 16,
     color: "#e74c3c",
-    marginTop: 16,
+    marginTop: 8,
   },
   chart: {
     borderRadius: 16,

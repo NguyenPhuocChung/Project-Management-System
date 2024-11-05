@@ -8,6 +8,7 @@ const {
   findProjectById,
   getProjectsByInvite,
   updateProjectStatus,
+  getStatusSummary,
 } = require("../controllers/projectController");
 const {
   addTask,
@@ -18,6 +19,7 @@ const {
   findAllTasksByProjectId,
   getTasksByInvite,
   updateTaskStatus,
+  getTaskStatusSummary,
 } = require("../controllers/taskController");
 const { login, register } = require("../controllers/authController");
 const {
@@ -58,12 +60,15 @@ router.put("/task/:id/status", updateTaskStatus); // Sử dụng PATCH cho việ
 
 router.delete("/deleteTask/:id", deleteTasksById);
 router.put("/updateTask/:id", updateTasksById);
+router.get("/task/status-summary", getTaskStatusSummary);
+
 //
 router.post("/addProject", addProject);
 router.delete("/deleteProject/:id", deleteProjectById);
 router.put("/updateProject/:id", updateProjectById);
 router.get("/projectsByInvite/:inviteId", getProjectsByInvite);
 router.put("/project/:id/status", updateProjectStatus); // Sử dụng PATCH cho việc cập nhật một phần
+router.get("/project/status-summary", getStatusSummary);
 
 //
 router.get("/calendering/:date", calendaring);

@@ -178,8 +178,57 @@ const updateProjectStatus = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
+//
+
+// Controller để lấy tổng số lượng của các trạng thái 'Ongoing', 'Not Started' và 'Progress'
+const getStatusSummary = async (req, res) => {
+  try {
+    // Sử dụng MongoDB aggregation để đếm số lượng theo trạng thái
+    const statusSummary = await Project.aggregate([
+      {
+        $match: {
+          status: { $in: ["Ongoing", "Not started", "Done"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Tạo object kết quả tổng hợp các trạng thái
+    const result = {
+      ongoing: 0,
+      notStarted: 0,
+      Done: 0,
+    };
+
+    // Duyệt qua các kết quả và cập nhật tổng số lượng theo từng trạng thái
+    statusSummary.forEach((item) => {
+      if (item._id === "Ongoing") {
+        result.ongoing = item.count;
+      } else if (item._id === "Not started") {
+        result.notStarted = item.count;
+      } else if (item._id === "Done") {
+        result.progress = item.count;
+      }
+    });
+
+    // Trả về kết quả dưới dạng JSON
+    res.status(200).json(result);
+    console.log("====================================");
+    console.log(result);
+    console.log("====================================");
+  } catch (error) {
+    console.error("Error fetching status summary:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
+  getStatusSummary,
   updateProjectStatus,
   addProject,
   findProject,

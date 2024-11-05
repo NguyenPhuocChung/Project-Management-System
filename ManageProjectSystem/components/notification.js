@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { fetchCalendar } from "../api/calendarService";
 import CalenderingStyle from "../CSS/Calendering";
 import GenerateStyles from "../CSS/Generate";
@@ -25,7 +26,7 @@ const Notification = ({ navigation }) => {
     try {
       const calendarData = await fetchCalendar(); // Fetch data from API
       setCalendarGetDate(calendarData);
-      setChung(calendarData); // Assuming you want to use 'calendarData' here
+      setChung(calendarData); // Set original data
       setFilteredData(calendarData); // Initialize filtered data
       console.log("Data fetched: ", calendarData);
     } catch (error) {
@@ -36,6 +37,7 @@ const Notification = ({ navigation }) => {
   useEffect(() => {
     getData();
   }, []);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await getData(); // Fetch new data when refreshing
@@ -70,103 +72,115 @@ const Notification = ({ navigation }) => {
       <Text style={styles.resultText}>
         Showing {filteredData.length} results
       </Text>
-      <FlatList
-        data={filteredData}
-        renderItem={({ item }) => (
-          <View style={styles.notificationItem}>
-            <Text
-              style={[GenerateStyles.sizeTitles, GenerateStyles.color]}
-              ellipsizeMode="tail"
-            >
-              {item.title}
-            </Text>
-            <Text
-              style={[
-                GenerateStyles.italic,
-                GenerateStyles.sizeDescription,
-                GenerateStyles.color,
-              ]}
-              ellipsizeMode="tail"
-              onPress={() =>
-                navigation.navigate("DetailMeeting", {
-                  name: "DetailMeeting",
-                  meeting: item,
-                  startTime: item.startTime,
-                  endTime: item.endTime,
-                })
-              }
-            >
-              {item.description}
-            </Text>
 
-            <TouchableOpacity
-              style={[
-                CalenderingStyle.buttonMeeting,
-                GenerateStyles.d_flex_align_center,
-                GenerateStyles.marginVertical,
-              ]}
-              onPress={() => console.log("Google Meet link:", item.link)}
-            >
-              <Image
-                style={[
-                  CalenderingStyle.img_googleMeet,
-                  GenerateStyles.marginRight,
-                ]}
-                source={require("../img/googlemeet.png")}
-              />
+      {filteredData.length > 0 ? (
+        <FlatList
+          data={filteredData}
+          renderItem={({ item }) => (
+            <View style={styles.notificationItem}>
               <Text
-                style={{
-                  color: "blue",
-                  textDecorationLine: "underline",
-                }}
+                style={[GenerateStyles.sizeTitles, GenerateStyles.color]}
+                ellipsizeMode="tail"
               >
-                {item.link}
+                {item.title}
               </Text>
-            </TouchableOpacity>
+              <Text
+                style={[
+                  GenerateStyles.italic,
+                  GenerateStyles.sizeDescription,
+                  GenerateStyles.color,
+                ]}
+                ellipsizeMode="tail"
+                onPress={() =>
+                  navigation.navigate("DetailMeeting", {
+                    name: "DetailMeeting",
+                    meeting: item,
+                    startTime: item.startTime,
+                    endTime: item.endTime,
+                  })
+                }
+              >
+                {item.description}
+              </Text>
 
-            <View
-              style={[
-                GenerateStyles.d_flex_align_center,
-                GenerateStyles.justify_between,
-              ]}
-            >
-              <View style={[GenerateStyles.d_flex]}>
+              <TouchableOpacity
+                style={[
+                  CalenderingStyle.buttonMeeting,
+                  GenerateStyles.d_flex_align_center,
+                  GenerateStyles.marginVertical,
+                ]}
+                onPress={() => console.log("Google Meet link:", item.link)}
+              >
                 <Image
-                  source={{
-                    uri: `http://${URL.BASE_URL}:5000/${item.createrBy.avatar}`,
-                  }}
-                  style={styles.avatar}
+                  style={[
+                    CalenderingStyle.img_googleMeet,
+                    GenerateStyles.marginRight,
+                  ]}
+                  source={require("../img/googlemeet.png")}
                 />
                 <Text
-                  style={[
-                    { marginLeft: 10 },
-                    GenerateStyles.sizeSubtext,
-                    GenerateStyles.colorTime,
-                  ]}
+                  style={{
+                    color: "blue",
+                    textDecorationLine: "underline",
+                  }}
                 >
-                  {item.createrBy?.fullName || "Unknown Creator"}{" "}
-                  {/* Display fullName or fallback */}
+                  {item.link}
                 </Text>
-              </View>
-              <View style={GenerateStyles.d_flex_align_center}>
-                <Text
-                  style={
-                    item.status === "online"
-                      ? GenerateStyles.red
-                      : GenerateStyles.green
-                  }
-                >
-                  {item.status}
-                </Text>
+              </TouchableOpacity>
+
+              <View
+                style={[
+                  GenerateStyles.d_flex_align_center,
+                  GenerateStyles.justify_between,
+                ]}
+              >
+                <View style={[GenerateStyles.d_flex_align_center]}>
+                  <Image
+                    source={
+                      item.createrBy && item.createrBy.avatar
+                        ? {
+                            uri: `http://${URL.BASE_URL}:5000/${item.createrBy.avatar}`,
+                          }
+                        : require("../assets/images.png") // Fallback to a default image
+                    }
+                    style={styles.avatar}
+                  />
+                  <Text
+                    style={[
+                      { marginLeft: 10 },
+                      GenerateStyles.sizeSubtext,
+                      GenerateStyles.colorTime,
+                    ]}
+                  >
+                    {item.createrBy?.fullName || "Unknown Creator"}
+                  </Text>
+                </View>
+                <View style={GenerateStyles.d_flex_align_center}>
+                  <Text
+                    style={
+                      item.status === "online"
+                        ? GenerateStyles.red
+                        : GenerateStyles.green
+                    }
+                  >
+                    {item.status}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        )}
-        keyExtractor={(item) => item._id.toString()}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        } // Adding pull-to-refresh control
-      />
+          )}
+          keyExtractor={(item) => item._id.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      ) : (
+        // Show "No Notifications" message and icon when there's no data
+        <View style={styles.noDataContainer}>
+          <Icon name="bell-slash" size={100} color="#dcdcdc" />
+          <Text style={styles.noDataText}>No notifications available</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -208,10 +222,20 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   avatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 50,
-    marginBottom: 10,
+    width: 25,
+    height: 25,
+    borderRadius: 20,
+  },
+  noDataContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  noDataText: {
+    fontSize: 18,
+    color: "#b0b0b0",
+    marginTop: 16,
   },
 });
 

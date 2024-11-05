@@ -97,4 +97,13 @@ export const updateTaskStatus = async (taskId, newStatus) => {
     throw error; // Ném lỗi để xử lý ở nơi gọi hàm
   }
 };
+export const getStatusSummary = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/task/status-summary`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+};
 // Sử dụng hàm

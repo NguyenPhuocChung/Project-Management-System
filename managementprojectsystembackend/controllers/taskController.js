@@ -176,8 +176,55 @@ const updateTaskStatus = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
+//
+const getTaskStatusSummary = async (req, res) => {
+  try {
+    // Sử dụng MongoDB aggregation để đếm số lượng theo trạng thái
+    const statusSummary = await Task.aggregate([
+      {
+        $match: {
+          status: { $in: ["Done", "Not started", "Ongoing"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Tạo object kết quả tổng hợp các trạng thái
+    const result = {
+      done: 0,
+      notStarted: 0,
+      ongoing: 0,
+    };
+
+    // Duyệt qua các kết quả và cập nhật tổng số lượng theo từng trạng thái
+    statusSummary.forEach((item) => {
+      if (item._id === "Done") {
+        result.ongoing = item.count;
+      } else if (item._id === "Not started") {
+        result.notStarted = item.count;
+      } else if (item._id === "Ongoing") {
+        result.progress = item.count;
+      }
+    });
+
+    // Trả về kết quả dưới dạng JSON
+    res.status(200).json(result);
+    console.log("====================================");
+    console.log(result);
+    console.log("====================================");
+  } catch (error) {
+    console.error("Error fetching status summary:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
+  getTaskStatusSummary,
   updateTaskStatus,
   addTask,
   findAllTasks,

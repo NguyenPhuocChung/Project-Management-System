@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const accountSchema = new mongoose.Schema({
   avatar: {
     type: String,
+    default: "", // Set a default value if needed
   },
   role: {
     type: String,
@@ -15,39 +16,35 @@ const accountSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true, // Ensure unique emails
   },
   fullName: {
     type: String,
+    default: "", // Set a default value if needed
   },
   birthDate: {
-    type: String,
+    type: Date, // Consider using Date type for birthDate for consistency
   },
   address: {
     type: String,
+    default: "", // Set a default value if needed
   },
   phone: {
     type: String,
+    default: "", // Set a default value if needed
   },
   position: {
     type: String,
-    required: false,
+    default: "", // Set a default value if needed
   },
   department: {
     type: String,
+    default: "", // Set a default value if needed
   },
   startDate: {
-    type: String,
+    type: Date,
+    default: Date.now, // Set default to current date
   },
-
-  mark: {
-    type: String,
-  },
-  workHistory: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
-    },
-  ],
 });
 
 // Create the Account model from the schema

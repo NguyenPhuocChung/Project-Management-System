@@ -58,6 +58,16 @@ const Home = () => {
         },
       ],
     },
+    {
+      title: "Dash Board",
+      data: [
+        {
+          icon: "analytics",
+          title: "Dash Board",
+          navigateTo: "DashBoard",
+        },
+      ],
+    },
   ];
 
   const renderSection = ({ item }) => (

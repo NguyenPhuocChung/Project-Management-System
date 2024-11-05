@@ -27,6 +27,9 @@ export const deleteAccount = async (accountId) => {
 
 // Function to fetch a specific account by ID
 export const fetchAccount = async (id) => {
+  console.log("====================================");
+  console.log(id);
+  console.log("====================================");
   try {
     const response = await axios.get(`${BASE_URL}/account/${id}`);
     return response.data;

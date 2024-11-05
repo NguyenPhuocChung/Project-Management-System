@@ -1,6 +1,6 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useRoute } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -17,6 +17,7 @@ import CalenderingStyle from "../CSS/Calendering";
 import GenerateStyles from "../CSS/Generate";
 import styles from "../CSS/ManageTask";
 import { fetchCalendarData } from "../api/calendarService";
+import URL from "../midleware/authMidleware";
 
 const Calendaring = ({ navigation }) => {
   const today = new Date();
@@ -108,6 +109,12 @@ const Calendaring = ({ navigation }) => {
       console.log("Error fetching calendar data:", error);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getDataFromDate(); // Refresh data when the screen is focused
+    }, [selectedDate])
+  );
 
   useEffect(() => {
     getDataFromDate();
@@ -209,22 +216,32 @@ const Calendaring = ({ navigation }) => {
           </TouchableOpacity>
 
           <View style={[GenerateStyles.d_flex, GenerateStyles.justify_between]}>
-            <View style={GenerateStyles.d_flex}>
-              <Image
-                style={[GenerateStyles.marginRight]}
-                source={require("../img/Group 52.png")}
-              />
+            <View style={GenerateStyles.d_flex_align_center}>
+              {item.createrBy?.avatar ? (
+                <Image
+                  source={{
+                    uri: `http://${URL.BASE_URL}:5000/${item.createrBy.avatar}`,
+                  }}
+                  style={{ width: 25, height: 25, borderRadius: 50 }} // Add styles to match your design
+                />
+              ) : (
+                <Image
+                  source={require("../assets/images.png")}
+                  style={{ width: 25, height: 25, borderRadius: 50 }} // Add styles to match your design
+                />
+              )}
+
               <Text
-                style={[GenerateStyles.sizeSubtext, GenerateStyles.colorTime]}
+                style={[
+                  GenerateStyles.sizeSubtext,
+                  GenerateStyles.colorTime,
+                  GenerateStyles.marginHorizonal,
+                ]}
               >
-                {item.creater}
+                {item.createrBy.fullName || "Null"}
               </Text>
             </View>
             <View style={GenerateStyles.d_flex_align_center}>
-              <Image
-                style={[CalenderingStyle.img_Highlight]}
-                source={require("../img/Group 52.png")}
-              />
               <Text
                 style={
                   item.status === "online"

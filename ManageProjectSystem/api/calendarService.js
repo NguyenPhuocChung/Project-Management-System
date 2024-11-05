@@ -29,6 +29,9 @@ export const deleteCalendarData = async (id) => {
 };
 
 export const updateCalendarData = async (id, data) => {
+  console.log("====================================");
+  console.log(id, data);
+  console.log("====================================");
   try {
     const response = await axios.put(
       `${BASE_URL}/updateCalendaring/${id}`,

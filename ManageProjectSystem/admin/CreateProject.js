@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
 import Dialog from "react-native-dialog";
 import { Dropdown } from "react-native-element-dropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,6 +32,7 @@ const CreateProject = () => {
   const [status, setStatus] = useState("Not started");
   const [fileName, setFileName] = useState("");
   const [load, setLoad] = useState("");
+  const navigation = useNavigation();
 
   const getID = async () => {
     const data = await AsyncStorage.getItem("userId");
@@ -89,7 +91,29 @@ const CreateProject = () => {
   const onChangeEndTime = (event, selectedTime) => {
     const currentTime = selectedTime || endTime;
     setShowEndTimePicker(false);
-    setEndTime(currentTime);
+
+    // Combine dates and times for accurate comparison
+    const startDateTime = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+      startTime.getHours(),
+      startTime.getMinutes()
+    );
+
+    const endDateTime = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+      currentTime.getHours(),
+      currentTime.getMinutes()
+    );
+
+    if (endDateTime > startDateTime) {
+      setEndTime(currentTime);
+    } else {
+      Alert.alert("Error", "End time must be after start time.");
+    }
   };
 
   const getAccount = async () => {
@@ -203,22 +227,26 @@ const CreateProject = () => {
         // Hiển thị tên và loại file đã chọn
         setFileName(selectedFile);
         Alert.alert(
-          "Đã chọn file: " + selectedFile.name,
-          "Loại file: " + selectedFile.mimeType
+          "Choose file: " + selectedFile.name,
+          "Type file: " + selectedFile.mimeType
         );
 
         // Xử lý tải lên hoặc mở file ở đây, ví dụ: tải lên server hoặc lưu tạm
         console.log("URI file:", selectedFile.uri);
       } else {
-        Alert.alert("Người dùng đã hủy chọn file");
+        Alert.alert("User cancel choose file");
       }
     } catch (error) {
       console.error("Error picking document:", error);
-      Alert.alert("Có lỗi xảy ra khi chọn file");
+      Alert.alert("Erro when choose file:", error);
     }
   };
   //
   const handleSubmit = async () => {
+    if (!title || !description || !invite || !labels || !createrBy) {
+      Alert.alert("Error", "Please fill in all required fields!");
+      return;
+    }
     const data = {
       title,
       description,
@@ -246,10 +274,11 @@ const CreateProject = () => {
       await createProject(formData); // Gọi API với formData
       Alert.alert("Submit success!");
       setLoad(true);
+      navigation.goBack();
     } catch (error) {
-      console.error("Error submitting assignment:", error);
+      console.error("Error submitting", error);
       setLoad(false);
-      Alert.alert("Lỗi khi nộp bài!");
+      Alert.alert("Error submitting");
     }
   };
   return (

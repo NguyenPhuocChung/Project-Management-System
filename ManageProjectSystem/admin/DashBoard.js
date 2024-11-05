@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { getStatusSummary } from "../api/projectService";
 
 const screenWidth = Dimensions.get("window").width;
@@ -30,7 +31,7 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Khai báo dữ liệu biểu đồ
+  // Chart data
   const chartData = {
     labels: ["Completed", "In Progress", "Not Started"],
     datasets: [
@@ -40,7 +41,7 @@ const Dashboard = () => {
     ],
   };
 
-  // Tính tổng số nhiệm vụ
+  // Calculate total tasks and progress percentage
   const totalTasks = data.completed + data.inProgress + data.notStarted;
   const progressPercentage = totalTasks
     ? ((data.completed / totalTasks) * 100).toFixed(2)
@@ -51,82 +52,90 @@ const Dashboard = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Dashboard</Text>
 
-        {/* Thông tin tóm tắt */}
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>
-            Tổng số công việc: {totalTasks}
-          </Text>
-          <Text style={styles.summaryText}>
-            Đã hoàn thành: {data.completed}
-          </Text>
-          <Text style={styles.summaryText}>
-            Đang thực hiện: {data.inProgress}
-          </Text>
-          <Text style={styles.summaryText}>
-            Chưa bắt đầu: {data.notStarted}
-          </Text>
-        </View>
+        {totalTasks > 0 ? (
+          <>
+            {/* Summary Information */}
+            <View style={styles.summaryContainer}>
+              <Text style={styles.summaryText}>Total Tasks: {totalTasks}</Text>
+              <Text style={styles.summaryText}>
+                Completed: {data.completed}
+              </Text>
+              <Text style={styles.summaryText}>
+                In Progress: {data.inProgress}
+              </Text>
+              <Text style={styles.summaryText}>
+                Not Started: {data.notStarted}
+              </Text>
+            </View>
 
-        {/* Thanh tiến trình */}
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>
-            Tiến độ: {progressPercentage}%
-          </Text>
-          <View style={styles.progressBar}>
-            <View
-              style={[styles.progress, { width: `${progressPercentage}%` }]}
-            />
-          </View>
-        </View>
+            {/* Progress Bar */}
+            <View style={styles.progressContainer}>
+              <Text style={styles.progressText}>
+                Progress: {progressPercentage}%
+              </Text>
+              <View style={styles.progressBar}>
+                <View
+                  style={[styles.progress, { width: `${progressPercentage}%` }]}
+                />
+              </View>
+            </View>
 
-        {/* Biểu đồ */}
-        <BarChart
-          data={chartData}
-          width={screenWidth - 32}
-          height={220}
-          fromZero={true}
-          chartConfig={{
-            backgroundColor: "#ffffff",
-            backgroundGradientFrom: "#f8f9fa",
-            backgroundGradientTo: "#ffffff",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(52, 152, 219, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(44, 62, 80, ${opacity})`,
-            style: {
-              borderRadius: 16,
-              marginVertical: 8,
-              paddingRight: 16,
-            },
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#e67e22",
-            },
-          }}
-          style={styles.chart}
-        />
+            {/* Bar Chart */}
+            <BarChart
+              data={chartData}
+              width={screenWidth - 32}
+              height={220}
+              fromZero={true}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#f8f9fa",
+                backgroundGradientTo: "#ffffff",
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(52, 152, 219, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(44, 62, 80, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                  marginVertical: 8,
+                  paddingRight: 16,
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "2",
+                  stroke: "#e67e22",
+                },
+              }}
+              style={styles.chart}
+            />
 
-        {/* Ghi chú trạng thái */}
-        <View style={styles.legend}>
-          <View style={styles.legendItem}>
-            <View
-              style={[styles.legendColor, { backgroundColor: "#3498db" }]}
-            />
-            <Text style={styles.legendText}>Completed</Text>
+            {/* Legend */}
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View
+                  style={[styles.legendColor, { backgroundColor: "#3498db" }]}
+                />
+                <Text style={styles.legendText}>Completed</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View
+                  style={[styles.legendColor, { backgroundColor: "#f39c12" }]}
+                />
+                <Text style={styles.legendText}>In Progress</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View
+                  style={[styles.legendColor, { backgroundColor: "#e74c3c" }]}
+                />
+                <Text style={styles.legendText}>Not Started</Text>
+              </View>
+            </View>
+          </>
+        ) : (
+          // Display a "No Data" message with an icon
+          <View style={styles.noDataContainer}>
+            <Icon name="inbox" size={100} color="#dcdcdc" />
+            <Text style={styles.noDataText}>No data available</Text>
           </View>
-          <View style={styles.legendItem}>
-            <View
-              style={[styles.legendColor, { backgroundColor: "#f39c12" }]}
-            />
-            <Text style={styles.legendText}>In Progress</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View
-              style={[styles.legendColor, { backgroundColor: "#e74c3c" }]}
-            />
-            <Text style={styles.legendText}>Not Started</Text>
-          </View>
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -198,6 +207,16 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 14,
     color: "#34495e",
+  },
+  noDataContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  noDataText: {
+    fontSize: 18,
+    color: "#b0b0b0",
+    marginTop: 16,
   },
 });
 

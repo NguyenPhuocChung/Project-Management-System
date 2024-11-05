@@ -5,7 +5,7 @@ const path = require("path"); // Thêm dòng này
 // Hàm tìm tài khoản có role là 'member'
 const findAccounts = async (req, res) => {
   try {
-    const members = await Account.find().populate("workHistory", "title");
+    const members = await Account.find();
     res.status(200).json(members); // Trả về danh sách tài khoản member
     console.log(members);
   } catch (error) {
@@ -32,10 +32,7 @@ const findAccountsByRole = async (req, res) => {
 
 const findAccountsByMemberRole = async (req, res) => {
   try {
-    const members = await Account.find({ role: "memeber" }).populate(
-      "workHistory",
-      "title"
-    );
+    const members = await Account.find({ role: "memeber" });
     res.status(200).json(members); // Trả về danh sách tài khoản member
     console.log(members);
   } catch (error) {
@@ -47,10 +44,7 @@ const findAccountsByMemberRole = async (req, res) => {
 // Hàm tìm tài khoản có role là 'leader'
 const findAccountsByLeaderRole = async (req, res) => {
   try {
-    const leaders = await Account.find({ role: "leader" }).populate(
-      "workHistory",
-      "title"
-    );
+    const leaders = await Account.find({ role: "leader" });
     res.status(200).json(leaders); // Trả về danh sách tài khoản leader
     console.log(JSON.stringify(leaders, null, 2));
   } catch (error) {
@@ -64,7 +58,7 @@ const findAccountsById = async (req, res) => {
     const id = req.params.id; // Lấy id từ params
     console.log(id);
 
-    const account = await Account.findById(id).populate("workHistory", "title"); // Sử dụng findById
+    const account = await Account.findById(id);
 
     if (!account) {
       return res.status(404).json({ message: "Account not found" }); // Nếu không tìm thấy tài khoản

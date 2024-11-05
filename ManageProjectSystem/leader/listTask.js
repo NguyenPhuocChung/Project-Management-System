@@ -33,7 +33,7 @@ const ListTask = ({ navigation }) => {
   const [error, setError] = useState(null); // Lưu lỗi
   const route = useRoute();
   const { data } = route.params;
-  const isFocused = useIsFocused(); // Kiểm tra trạng thái focus của màn hình
+  const isFocused = useIsFocused(); // Check if the screen is focused
   const [searchQuery, setSearchQuery] = useState(""); // Trạng thái tìm kiếm
   const [status, setStatus] = useState("Done"); // Trạng thái ban đầu
   const [statusProject, setStatusProject] = useState("Ongoing"); // Trạng thái ban đầu
@@ -41,48 +41,71 @@ const ListTask = ({ navigation }) => {
   const time = data.createdAt ? new Date(data.createdAt) : null;
   const timeCreateAt = time ? time.toLocaleDateString() : "";
   const handleUpdateStatus = async (id) => {
-    console.log("====================================");
-    console.log(id, status);
-    console.log("====================================");
-    try {
-      const updatedTask = await updateTaskStatus(id, status);
-      if (updatedTask) {
-        // Cập nhật giao diện hoặc thông báo thành công cho người dùng
-        console.log("Updated task:", updatedTask);
-        Alert.alert("Updated task:", updatedTask);
-
-        task();
-      }
-    } catch (error) {
-      // Xử lý lỗi, có thể thông báo cho người dùng
-      console.error("Failed to update task status:", error);
-    }
+    Alert.alert(
+      "Update Task Status",
+      "Are you sure you want to update the status to 'Done'?",
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const updatedTask = await updateTaskStatus(id, "Done"); // Update status to "Done"
+              if (updatedTask) {
+                Alert.alert("Success", "Task status updated successfully!");
+                task(); // Refresh the task list
+              }
+            } catch (error) {
+              console.error("Failed to update task status:", error);
+              Alert.alert(
+                "Error",
+                "Failed to update task status. Please try again."
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
   //
-  const handleUpdateStatusProject = async (id) => {
-    console.log("====================================");
-    console.log(id, status);
-    console.log("====================================");
-    try {
-      const updatedTask = await updateProjectStatus(id, statusProject);
-      if (updatedTask) {
-        // Cập nhật giao diện hoặc thông báo thành công cho người dùng
-        console.log("Updated task:", updatedTask);
-        Alert.alert(
-          "Task Updated",
-          `The task "${updatedTask.title}" has been updated to status: "${updatedTask.status}".`
-        );
 
-        task();
-      }
-    } catch (error) {
-      // Xử lý lỗi, có thể thông báo cho người dùng
-      console.error("Failed to update task status:", error);
-      Alert.alert(
-        "Update Failed",
-        "There was an error updating the task. Please try again."
-      );
-    }
+  const handleUpdateStatusProject = async (id) => {
+    Alert.alert(
+      "Update Project Status",
+      "Are you sure you want to update the project status to 'Ongoing'?",
+      [
+        {
+          text: "No",
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const updatedProject = await updateProjectStatus(id, "Ongoing"); // Update status to "Ongoing"
+              if (updatedProject) {
+                Alert.alert(
+                  "Success",
+                  `The project "${updatedProject.title}" status has been updated to: "${updatedProject.status}".`
+                );
+                task(); // Refresh the task list
+              }
+            } catch (error) {
+              console.error("Failed to update project status:", error);
+              Alert.alert(
+                "Error",
+                "Failed to update project status. Please try again."
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
   const task = async () => {
     const projectId = data?._id; // Safely access the projectId

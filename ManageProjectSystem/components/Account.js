@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -22,7 +23,6 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { fetchAccount, updateAccount } from "../api/accountService";
 import URL from "../midleware/authMidleware";
-import URL from "../midleware/authMidleware";
 
 const AccountDetail = () => {
   const [image, setImage] = useState(null);
@@ -41,9 +41,6 @@ const AccountDetail = () => {
     position: null,
     role: null,
     department: null,
-    startDate: null,
-    salary: null,
-    avatar: null,
   });
 
   const loadData = async () => {
@@ -81,12 +78,8 @@ const AccountDetail = () => {
         position: accountData.position || null,
         role: accountData.role || null,
         department: accountData.department || null,
-        startDate: accountData.startDate || null,
-        salary: accountData.salary || null,
-        avatar: accountData.avatar,
-        workHistory: accountData.workHistory || [],
       });
-      setError(null); // Clear any existing errors
+      setError(null);
     } catch (err) {
       setError(`Error fetching account data: ${err.message}`);
     } finally {
@@ -110,7 +103,6 @@ const AccountDetail = () => {
   const handleUpdateAccount = async () => {
     const validationErrors = [];
 
-    // Add specific validation rules for fields
     if (updatedAccount.phone && !/^\d{10,15}$/.test(updatedAccount.phone)) {
       validationErrors.push("Phone number must be between 10-15 digits.");
     }
@@ -135,7 +127,7 @@ const AccountDetail = () => {
       setAccount(accountData);
       setUpdatedAccount(accountData);
       setVisible(false);
-      setError(null); // Clear error if successful
+      setError(null);
     } catch (err) {
       setError(`Error updating account: ${err.message}`);
     }
@@ -144,7 +136,7 @@ const AccountDetail = () => {
   const handleImageUpload = async () => {
     let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!result.granted) {
-      alert("Bạn cần cấp quyền truy cập thư viện ảnh.");
+      alert("You need to grant permission to access the photo library.");
       return;
     }
 
@@ -176,9 +168,9 @@ const AccountDetail = () => {
             },
           }
         );
-        alert("Upload thành công!");
+        alert("Upload successful!");
       } catch (err) {
-        alert("Upload thất bại.");
+        alert("Upload failed.");
         console.error(err);
       }
     }
@@ -192,7 +184,9 @@ const AccountDetail = () => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{error}</Text>
-        <Button onPress={onRefresh}>Try Again</Button>
+        <Button mode="contained" onPress={onRefresh}>
+          Try Again
+        </Button>
       </View>
     );
   }
@@ -209,16 +203,21 @@ const AccountDetail = () => {
         }
       >
         <View style={styles.avatarContainer}>
-          {account?.avatar && (
-            <Image
-              source={{
-                uri: `http://${URL.BASE_URL}:5000/${account.avatar}`,
-              }}
-              style={styles.avatar}
-            />
-          )}
-          <TouchableOpacity onPress={handleImageUpload}>
-            <Text style={styles.uploadButtonText}>Upload</Text>
+          <Image
+            source={
+              account && account.avatar
+                ? {
+                    uri: `http://${URL.BASE_URL}:5000/${account.avatar}`,
+                  }
+                : require("../assets/images.png") // Fallback to a default image
+            }
+            style={styles.avatar}
+          />
+          <TouchableOpacity
+            onPress={handleImageUpload}
+            style={styles.uploadButton}
+          >
+            <Text style={styles.uploadButtonText}>Upload New Photo</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -236,7 +235,7 @@ const AccountDetail = () => {
           style={styles.editButton}
           onPress={() => setVisible(true)}
         >
-          <Text style={styles.editButtonText}>Edit</Text>
+          <Text style={styles.editButtonText}>Edit Account</Text>
         </TouchableOpacity>
 
         <Modal
@@ -270,16 +269,22 @@ const AccountDetail = () => {
 
 const renderDetail = (label, value, iconName) => (
   <View style={styles.detailContainer}>
-    <Icon name={iconName} size={20} />
-    <Text style={styles.detailLabel}>{label}: </Text>
-    <Text>{value || "N/A"}</Text>
+    <Icon
+      name={iconName}
+      size={20}
+      color="#6200ee"
+      style={{ marginRight: 8 }}
+    />
+    <Text style={styles.detailLabel}>{label}:</Text>
+    <Text style={styles.detailValue}>{value || "N/A"}</Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    height: "100%",
+    backgroundColor: "#f5f5f5",
+    flex: 1,
   },
   errorContainer: {
     flex: 1,
@@ -289,45 +294,61 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: "#6200ee",
     marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  uploadButton: {
+    marginTop: 10,
+    backgroundColor: "#6200ee",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
   },
   uploadButtonText: {
-    color: "#6200ee",
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   editButton: {
     backgroundColor: "#6200ee",
-    padding: 10,
-    borderRadius: 5,
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
     alignItems: "center",
   },
   editButtonText: {
     color: "#ffffff",
+    fontSize: 16,
     fontWeight: "bold",
   },
   modalContainer: {
-    backgroundColor: "white",
-    height: "100%",
+    backgroundColor: "#ffffff",
     padding: 20,
-    margin: 20,
+    margin: 10,
     borderRadius: 10,
+    elevation: 5,
   },
   modalTitle: {
     fontSize: 24,
+    fontWeight: "bold",
+    color: "#6200ee",
     marginBottom: 16,
+    textAlign: "center",
   },
   textInput: {
-    marginBottom: 16,
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    margin: 20,
+    marginBottom: 12,
+    backgroundColor: "#f0f0f0",
   },
   detailContainer: {
     flexDirection: "row",
@@ -336,6 +357,16 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontWeight: "bold",
+    color: "#333",
+    marginRight: 5,
+  },
+  detailValue: {
+    color: "#333",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
 

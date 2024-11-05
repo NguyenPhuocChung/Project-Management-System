@@ -1,9 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useRoute } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
-
 import React, { useEffect, useState } from "react";
+
 import {
   Alert,
   Image,
@@ -14,6 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Dialog from "react-native-dialog";
 import { Dropdown } from "react-native-element-dropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,29 +23,26 @@ import styles from "../CSS/ManageTask";
 import { getAllAccounts } from "../api/accountService";
 import { createTask } from "../api/taskService";
 
-const ListTask = () => {
+const CreateTask = () => {
   const [title, setTitle] = useState(null);
   const [description, setDescription] = useState(null);
   const [invite, setValue_invite] = useState(null);
   const [labels, setValue_labels] = useState(null);
   const [createrBy, setId] = useState(null);
-  const [status, setStatus] = useState("not started");
-  const route = useRoute();
-  const { data } = route.params;
-  const projectId = data._id;
+  const [status, setStatus] = useState("Not started");
   const [fileName, setFileName] = useState("");
   const [load, setLoad] = useState("");
+  const navigation = useNavigation();
 
+  const route = useRoute();
+  const { data } = route.params;
+  console.log("====================================");
+  const projectId = data?._id;
+  console.log("====================================");
   const getID = async () => {
-    const idUser = await AsyncStorage.getItem("userId");
-    if (idUser !== null) {
-      setId(idUser); // Gán trực tiếp idUser
-      console.log("id", idUser); // Kiểm tra idUser
-    } else {
-      console.log("User ID not found");
-    }
+    const data = await AsyncStorage.getItem("userId");
+    if (data !== null) setId(data);
   };
-
   useEffect(() => {
     getID();
   }, []);
@@ -60,11 +58,12 @@ const ListTask = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [invitePeople, setInvitePeople] = useState([]);
-
+  //
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  //
   const [successVisible, setSuccessVisible] = useState(false);
   const [errorVisible, setErrorVisible] = useState(false);
   ////////////////////////////////////////////////////////////////
@@ -97,8 +96,31 @@ const ListTask = () => {
   const onChangeEndTime = (event, selectedTime) => {
     const currentTime = selectedTime || endTime;
     setShowEndTimePicker(false);
-    setEndTime(currentTime);
+
+    // Combine dates and times for accurate comparison
+    const startDateTime = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+      startTime.getHours(),
+      startTime.getMinutes()
+    );
+
+    const endDateTime = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+      currentTime.getHours(),
+      currentTime.getMinutes()
+    );
+
+    if (endDateTime > startDateTime) {
+      setEndTime(currentTime);
+    } else {
+      Alert.alert("Error", "End time must be after start time.");
+    }
   };
+
   const getAccount = async () => {
     try {
       // Gửi yêu cầu POST đến API
@@ -165,22 +187,10 @@ const ListTask = () => {
       </Text>
     );
   };
-  // const renderNameProject = () => {
-  //   return (
-  //     <Text
-  //       style={[
-  //         styles.label,
-  //         GenerateStyles.bold,
-  //         isFocus_nameproject && { color: "blue" },
-  //       ]}
-  //     >
-  //       Name Project
-  //     </Text>
-  //   );
-  // };
+
   // const handleSubmit = async () => {
   //   // Tạo đối tượng dữ liệu từ các state
-  //   console.log(createrBy);
+  //   console.log("createrBy", createrBy);
 
   //   const data = {
   //     title,
@@ -189,7 +199,6 @@ const ListTask = () => {
   //     startTime: startTime.toISOString(), // Chuyển đổi thời gian thành chuỗi ISO
   //     endDate: endDate.toISOString(), // Chuyển đổi thành chuỗi ISO
   //     endTime: endTime.toISOString(), // Chuyển đổi thành chuỗi ISO
-  //     projectId,
   //     invite,
   //     labels,
   //     status,
@@ -198,17 +207,16 @@ const ListTask = () => {
 
   //   try {
   //     // Gửi yêu cầu POST đến API
-  //     console.log("create task", data);
-  //     const response = await createTask(data);
+  //     const response = await createProject(data);
   //     setSuccessVisible(true);
+
   //     console.log(response.data);
   //   } catch (error) {
   //     console.error(error);
   //     setErrorVisible(true);
   //   }
   // };
-
-  //
+  // get img
   const handleFileUpload = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -224,22 +232,26 @@ const ListTask = () => {
         // Hiển thị tên và loại file đã chọn
         setFileName(selectedFile);
         Alert.alert(
-          "Đã chọn file: " + selectedFile.name,
-          "Loại file: " + selectedFile.mimeType
+          "Choose file: " + selectedFile.name,
+          "Type file: " + selectedFile.mimeType
         );
 
         // Xử lý tải lên hoặc mở file ở đây, ví dụ: tải lên server hoặc lưu tạm
         console.log("URI file:", selectedFile.uri);
       } else {
-        Alert.alert("Người dùng đã hủy chọn file");
+        Alert.alert("User cancel choose file");
       }
     } catch (error) {
       console.error("Error picking document:", error);
-      Alert.alert("Có lỗi xảy ra khi chọn file");
+      Alert.alert("Erro when choose file:", error);
     }
   };
   //
   const handleSubmit = async () => {
+    if (!title || !description || !invite || !labels || !createrBy) {
+      Alert.alert("Error", "Please fill in all required fields!");
+      return;
+    }
     const data = {
       title,
       description,
@@ -247,10 +259,10 @@ const ListTask = () => {
       startTime: startTime.toISOString(), // Chuyển đổi thời gian thành chuỗi ISO
       endDate: endDate.toISOString(), // Chuyển đổi thành chuỗi ISO
       endTime: endTime.toISOString(), // Chuyển đổi thành chuỗi ISO
-      projectId,
       invite,
       labels,
       status,
+      projectId,
       createrBy,
     };
 
@@ -265,19 +277,16 @@ const ListTask = () => {
       });
     }
     try {
-      console.log("====================================");
-      console.log(formData);
-      console.log("====================================");
       await createTask(formData); // Gọi API với formData
       Alert.alert("Submit success!");
       setLoad(true);
+      navigation.goBack();
     } catch (error) {
-      console.error("Error submitting assignment:", error);
+      console.error("Error submitting", error);
       setLoad(false);
-      Alert.alert("Lỗi khi nộp bài!");
+      Alert.alert("Error submitting");
     }
   };
-  //
   return (
     <SafeAreaView>
       <ScrollView>
@@ -308,7 +317,7 @@ const ListTask = () => {
             value={title}
             onChangeText={(title) => setTitle(title)}
           />
-          <TouchableOpacity
+          <View
             style={[
               styles.control_content_task,
               { backgroundColor: "#F5F5F5" },
@@ -321,19 +330,18 @@ const ListTask = () => {
                 source={require("../img/folder-plus.png")}
               />
             </TouchableOpacity>
-          </TouchableOpacity>
+          </View>
           <View>
             <TextInput
               style={[styles.text_create_task, styles.font_size_content]}
-              placeholder="Create a project"
+              placeholder="Create a task"
               multiline
               numberOfLines={4}
               value={description}
               onChangeText={(description) => setDescription(description)}
             />
+            <Text> {fileName.name}</Text>
           </View>
-          <Text> {fileName.name}</Text>
-
           <View>
             <View
               style={[GenerateStyles.marginVertical, GenerateStyles.box_create]}
@@ -404,9 +412,6 @@ const ListTask = () => {
                   )}
                 />
               </View>
-              <View>
-                <Text>Project ID: {projectId}</Text>
-              </View>
               {/* <View>
                 {renderNameProject()}
                 <Dropdown
@@ -460,7 +465,7 @@ const ListTask = () => {
                     width: "auto",
                   }}
                 >
-                  <View>
+                  <TouchableOpacity>
                     <TextInput
                       style={{
                         width: 120,
@@ -478,7 +483,7 @@ const ListTask = () => {
                         onChange={onChangeStartDate}
                       />
                     )}
-                  </View>
+                  </TouchableOpacity>
                   <Text
                     style={{
                       width: 1,
@@ -633,4 +638,4 @@ const ListTask = () => {
     </SafeAreaView>
   );
 };
-export default ListTask;
+export default CreateTask;
