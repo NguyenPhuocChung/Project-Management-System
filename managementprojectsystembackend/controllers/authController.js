@@ -3,8 +3,10 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken"); // Import JWT library
 require("dotenv").config(); // Đảm bảo rằng dòng này được thêm vào đầu file
-const isAuthenticated = (req, res, next, token) => {
-  console.log("Token in session:", token); // Debug log
+//
+const isAuthenticated = (req, res, next) => {
+  const token = req.session.token; // Lấy token từ session
+  console.log("Token in session:", token);
   console.log("Session data in route:", req.session);
 
   if (!token) {
@@ -15,15 +17,15 @@ const isAuthenticated = (req, res, next, token) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      console.error("Token verification error:", err); // Log lỗi để kiểm tra
+      console.error("Token verification error:", err);
       return res
         .status(401)
         .json({ message: "Unauthorized access: Invalid token" });
     }
 
-    req.user = decoded; // Lưu thông tin người dùng đã xác thực vào req
-    console.log("Decoded user:", req.user); // Log thông tin người dùng đã xác thực
-    next(); // Proceed to the next middleware or route handler
+    req.user = decoded; // Lưu thông tin người dùng vào req
+    console.log("Decoded user:", req.user);
+    next(); // Tiếp tục đến middleware hoặc route handler tiếp theo
   });
 };
 // Hàm gửi OTP qua email
@@ -131,7 +133,6 @@ const login = async (req, res) => {
   }
 
   try {
-    // Tìm người dùng dựa trên email và role
     const user = await User.findOne({ email, role });
     if (!user) {
       return res
@@ -139,7 +140,6 @@ const login = async (req, res) => {
         .json({ message: "Invalid email or password or role" });
     }
 
-    // Kiểm tra mật khẩu
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res
@@ -147,7 +147,6 @@ const login = async (req, res) => {
         .json({ message: "Invalid email or password or role" });
     }
 
-    // Tạo JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -156,9 +155,8 @@ const login = async (req, res) => {
 
     // Lưu token vào session
     req.session.token = token; // Lưu token vào session
-
     console.log("User logged in, storing in session:", req.session.token);
-    isAuthenticated(req.session.token);
+
     res.status(200).json({
       message: "Login successful",
       user: { id: user._id, email, role: user.role },
