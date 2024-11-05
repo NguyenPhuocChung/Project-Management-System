@@ -212,7 +212,7 @@ const getTaskStatusSummary = async (req, res) => {
     // Duyệt qua các kết quả và cập nhật tổng số lượng theo từng trạng thái
     statusSummary.forEach((item) => {
       if (item._id === "Done") {
-        result.ongoing = item.count;
+        result.Done = item.count;
       } else if (item._id === "Not started") {
         result.notStarted = item.count;
       } else if (item._id === "Ongoing") {

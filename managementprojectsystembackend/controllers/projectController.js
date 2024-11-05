@@ -215,7 +215,7 @@ const getStatusSummary = async (req, res) => {
       } else if (item._id === "Not started") {
         result.notStarted = item.count;
       } else if (item._id === "Done") {
-        result.progress = item.count;
+        result.Done = item.count;
       }
     });
 

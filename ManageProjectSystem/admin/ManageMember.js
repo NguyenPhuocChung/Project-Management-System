@@ -79,7 +79,11 @@ const MemberManagement = ({ navigation }) => {
   useEffect(() => {
     fetchMembers();
   }, []);
-
+  const formDate = () => {
+    const date = new Date();
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
   return (
     <View style={styles.container}>
       <TextInput
@@ -204,7 +208,7 @@ const MemberManagement = ({ navigation }) => {
               Salary: {selectedMember.salary || "null"}
             </Text>
             <Text style={styles.infoText}>
-              Start Date: {selectedMember.startDate || "null"}
+              Start Date: {formDate(selectedMember.startDate) || "null"}
             </Text>
             <TouchableOpacity
               style={styles.closeButton}
