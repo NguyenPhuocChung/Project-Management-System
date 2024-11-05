@@ -1,4 +1,7 @@
 import { useRoute } from "@react-navigation/native";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
+import * as Sharing from "expo-sharing"; // Import thư viện chia sẻ
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -12,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import URL from "../midleware/authMidleware"; // Adjust the import as necessary
 
 import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Thay đổi bộ icon tùy ý
@@ -314,7 +318,47 @@ const ListTask = ({ navigation }) => {
   const filteredTasks = tasks.filter((task) =>
     task.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  //
+  const downloadFile = async (fileName) => {
+    if (!fileName) {
+      Alert.alert("Error", "Please enter a file name");
+      return;
+    }
+    // Yêu cầu quyền truy cập bộ nhớ
+    const { status } = await MediaLibrary.requestPermissionsAsync();
 
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission denied",
+        "You need to enable permission to download files."
+      );
+      return;
+    }
+
+    const fileUri = `http://${URL.BASE_URL}:5000/file/${fileName}`; // URL file trên server
+    const localFileUri = `${FileSystem.documentDirectory}${fileName}`; // Đường dẫn tạm thời
+
+    try {
+      // Tải xuống tệp
+      const { uri } = await FileSystem.downloadAsync(fileUri, localFileUri);
+      console.log("Downloaded file URI:", uri);
+
+      // Mở tệp sau khi tải xuống
+      await Sharing.shareAsync(uri, {
+        UTI: "public.document", // Định dạng tệp chung
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Định dạng tệp .docx
+      });
+
+      Alert.alert("Download completed!", `File downloaded and opened.`);
+    } catch (error) {
+      console.error(error);
+      Alert.alert(
+        "Download failed",
+        "An error occurred while downloading the file."
+      );
+    }
+  };
   return (
     <SafeAreaView style={[styles.main]}>
       <View style={[styles.form_create_task]}>
@@ -353,6 +397,9 @@ const ListTask = ({ navigation }) => {
             </TouchableOpacity>
           )}
         </View>
+        {data.file && (
+          <Button title="Open file" onPress={() => downloadFile(data.file)} />
+        )}
         <Text style={[styles.horizol, styles.margin_vertical]}></Text>
         <Button
           onPress={() =>
