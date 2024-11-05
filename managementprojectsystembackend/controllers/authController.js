@@ -280,17 +280,17 @@ const checkEmailExists = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
-const logout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error during logout:", err);
-      return res.status(500).json({ message: "Failed to logout" });
-    }
-    res.status(200).json({ message: "Logout successful" });
-  });
-};
+// const logout = (req, res) => {
+//   req.session.destroy((err) => {
+//     if (err) {
+//       console.error("Error during logout:", err);
+//       return res.status(500).json({ message: "Failed to logout" });
+//     }
+//     res.status(200).json({ message: "Logout successful" });
+//   });
+// };
 module.exports = {
-  logout,
+  // logout,
   register,
   login,
   checkPassword,
