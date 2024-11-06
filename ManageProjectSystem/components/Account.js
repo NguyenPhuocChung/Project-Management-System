@@ -181,14 +181,20 @@ const AccountDetail = () => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.errorText}>Error update</Text>
         <Button mode="contained" onPress={onRefresh}>
           Try Again
         </Button>
       </View>
     );
   }
-
+  const formatDate = () => {
+    let date = new Date(account.startDate);
+    let formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()}`;
+    return formattedDate;
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -220,12 +226,20 @@ const AccountDetail = () => {
         </View>
         <View>
           {renderDetail("Full Name", account.fullName, "person")}
-          {renderDetail("Birth Date", account.birthDate || "N/A", "event")}
+          {renderDetail(
+            "Birth Date",
+            formatDate(account.birthDate) || "N/A",
+            "event"
+          )}
           {renderDetail("Address", account.address || "N/A", "location-on")}
           {renderDetail("Phone", account.phone || "N/A", "phone")}
           {renderDetail("Position", account.position || "N/A", "work")}
           {renderDetail("Department", account.department || "N/A", "business")}
-          {renderDetail("Start Date", account.startDate || "N/A", "date-range")}
+          {renderDetail(
+            "Start Date",
+            formatDate(account.startDate) || "N/A",
+            "date-range"
+          )}
         </View>
         <TouchableOpacity
           style={styles.editButton}
@@ -379,9 +393,16 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   errorText: {
-    color: "red",
-    textAlign: "center",
-    marginBottom: 10,
+    color: "red", // Giữ màu đỏ cho thông báo lỗi
+    textAlign: "center", // Căn giữa văn bản
+    marginBottom: 10, // Khoảng cách dưới
+    fontSize: 16, // Cỡ chữ rõ ràng
+    fontWeight: "bold", // Làm cho văn bản đậm
+    backgroundColor: "#f8d7da", // Thêm nền màu nhạt để làm nổi bật thông báo lỗi
+    paddingVertical: 5, // Khoảng cách dọc bên trong
+    borderRadius: 5, // Bo góc để làm mềm mại
+    borderWidth: 1, // Đường viền mỏng
+    borderColor: "#f5c6cb", // Màu đường viền nhẹ
   },
 });
 

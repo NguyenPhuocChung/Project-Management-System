@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { fetchAccount } from "../api/apiservice";
+import URL from "../midleware/authMidleware";
 
 import HomeLeader from "../leader/Home";
 
@@ -135,14 +136,16 @@ const Leader = () => {
         </View>
 
         <TouchableOpacity>
-          {data && data.avatar && (
-            <Image
-              source={{
-                uri: `http://192.168.1.3:5000/${data.avatar}`,
-              }}
-              style={styles.avatar}
-            />
-          )}
+          <Image
+            source={
+              data && data.avatar
+                ? {
+                    uri: `http://${URL.BASE_URL}:5000/${data.avatar}`,
+                  }
+                : require("../assets/images.png") // Fallback to a default image
+            }
+            style={styles.avatar}
+          />
         </TouchableOpacity>
       </View>
 

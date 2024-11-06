@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Icons from "react-native-vector-icons/MaterialIcons";
 import GenerateStyles from "../CSS/Generate";
 import styles from "../CSS/ManageTask";
 import { deleteProjectById, fetchProjects } from "../api/projectService"; // Corrected import
@@ -243,8 +244,11 @@ const ManageProject = ({ navigation }) => {
         onChangeText={setSearchQuery} // Cập nhật trạng thái tìm kiếm
       />
       {projects.length === 0 ? (
-        <View style={{ padding: 20, alignItems: "center" }}>
-          <Text style={{ fontSize: 16, color: "red" }}>No Projects.</Text>
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <Icons name="assignment" size={50} color="#ccc" />
+          <Text style={{ fontSize: 18, color: "#aaa", marginTop: 10 }}>
+            No project available
+          </Text>
         </View>
       ) : (
         <FlatList

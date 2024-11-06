@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Thay đổi bộ icon tùy ý
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { fetchTask } from "../api/taskService";
 import Generate from "../CSS/Generate";
@@ -25,21 +25,21 @@ const StatusAllTask = ({ navigation }) => {
 
   const task = async () => {
     setLoading(true);
-    setRefreshing(true); // Bắt đầu trạng thái refreshing
+    setRefreshing(true);
     try {
-      const taskData = await fetchTask(); // Lấy dữ liệu tác vụ
-      setTasks(taskData); // Lưu dữ liệu vào state
-      console.log("task", taskData); // In ra dữ liệu để debug
+      const taskData = await fetchTask();
+      setTasks(taskData);
+      console.log("task", taskData);
     } catch (err) {
-      setError(err.message); // Lưu lỗi nếu có
+      setError(err.message);
     } finally {
-      setLoading(false); // Đánh dấu rằng việc tải dữ liệu đã hoàn tất
-      setRefreshing(false); // Kết thúc trạng thái refreshing
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    task(); // Gọi hàm để lấy dữ liệu khi component mount
+    task();
   }, []);
 
   const renderItem = ({ item }) => {
@@ -59,7 +59,6 @@ const StatusAllTask = ({ navigation }) => {
           />
         </TouchableOpacity>
         <View style={[styles.box_task, { position: "relative" }]}>
-          {/* Hiển thị startDate và endDate */}
           <View
             style={[
               Generate.d_flex_align_center,
@@ -68,7 +67,6 @@ const StatusAllTask = ({ navigation }) => {
           >
             <Text style={Generate.sizeSubtext}>{startDateLocal}</Text>
             <Icon name="arrow-forward" size={10} color="#000" />
-            {/* Icon mũi tên */}
             <Text style={Generate.sizeSubtext}>{endDateLocal}</Text>
           </View>
           <View>
@@ -79,7 +77,7 @@ const StatusAllTask = ({ navigation }) => {
                 statusmember.marginBottom,
               ]}
             >
-              {item.invite.fullName}
+              {item?.invite?.fullName ?? "null"}
             </Text>
             <Text
               style={[Generate.sizeTitles, statusmember.text_box_status_member]}
@@ -119,7 +117,6 @@ const StatusAllTask = ({ navigation }) => {
                     ? styles.color_notstarted
                     : styles.color_done,
                   styles.font_size_content,
-                  styles.font_size_content,
                 ]}
               >
                 {item.status}
@@ -130,12 +127,14 @@ const StatusAllTask = ({ navigation }) => {
       </View>
     );
   };
-  // Hàm để lọc danh sách tác vụ dựa trên từ khóa tìm kiếm
-  const filteredTasks = tasks.filter(
+
+  const filteredTasks = (tasks || []).filter(
     (task) =>
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.invite.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+      (task.invite &&
+        task.invite.fullName.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
   return (
     <SafeAreaView style={[styles.main]}>
       {error && <Text style={{ color: "red" }}>{error}</Text>}
@@ -150,20 +149,26 @@ const StatusAllTask = ({ navigation }) => {
         }}
         placeholder="Find task..."
         value={searchQuery}
-        onChangeText={setSearchQuery} // Cập nhật trạng thái tìm kiếm
+        onChangeText={setSearchQuery}
       />
-      <FlatList
-        data={filteredTasks} // Sử dụng danh sách đã lọc
-        renderItem={renderItem}
-        keyExtractor={(item) => item._id}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing} // Trạng thái refreshing
-            onRefresh={task} // Hàm gọi lại khi kéo refresh
-          />
-        }
-        style={{ marginBottom: 150 }}
-      />
+      {filteredTasks.length === 0 ? (
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <Icon name="assignment" size={50} color="#ccc" />
+          <Text style={{ fontSize: 18, color: "#aaa", marginTop: 10 }}>
+            No tasks available
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTasks}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={task} />
+          }
+          style={{ marginBottom: 150 }}
+        />
+      )}
     </SafeAreaView>
   );
 };

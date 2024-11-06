@@ -62,8 +62,7 @@ exports.getCommentsByTask = async (req, res) => {
       });
 
     console.log("Retrieved comments successfully.");
-    res.status(200).json(comments); // Return the comments found
-    console.log(comments);
+    return res.status(200).json(comments || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error retrieving comments:", error);
     res.status(500).json({ message: "Server error." });

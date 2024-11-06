@@ -58,8 +58,7 @@ const findProject = async (req, res) => {
     const allProject = await Project.find()
       .populate("createrBy", "fullName")
       .populate("invite"); // Lấy fullName từ Accounts
-    res.status(200).json(allProject); // Gửi phản hồi JSON với tất cả dự án
-    console.log(JSON.stringify(allProject, null, 2));
+    return res.status(200).json(allProject || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error fetching projects:", error); // In lỗi ra console
     res.status(500).json({ message: "Server error" });
@@ -141,14 +140,7 @@ const getProjectsByInvite = async (req, res) => {
       .populate("createrBy", "fullName")
       .populate("invite", "fullName");
 
-    if (!projects || projects.length === 0) {
-      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
-      return res
-        .status(200)
-        .json({ message: "No projects found", projects: [] });
-    }
-
-    res.status(200).json(projects);
+    return res.status(200).json(projects || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error fetching projects by invite:", error);
     res

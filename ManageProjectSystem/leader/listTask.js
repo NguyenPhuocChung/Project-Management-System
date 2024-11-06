@@ -365,6 +365,9 @@ const ListTask = ({ navigation }) => {
         <Text style={[styles.fontSize_title, styles.margin_vertical]}>
           {data.title}
         </Text>
+        <Text style={[styles.font_size_content, styles.margin_vertical]}>
+          {data.description}
+        </Text>
         <View style={[styles.d_flex]}>
           <Text
             style={[
@@ -390,6 +393,8 @@ const ListTask = ({ navigation }) => {
                   Generate.box_status_notstarted,
                   Generate.box_status_notstarted,
                   Generate.box,
+                  Generate.marginVertical,
+                  Generate.textCenter,
                 ]}
               >
                 {data.status}

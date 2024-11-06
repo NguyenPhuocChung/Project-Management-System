@@ -43,7 +43,12 @@ const MainScreen = () => {
   const [showFooter, setShowFooter] = useState(true);
   // Hàm kiểm tra tên màn hình
   const checkFooterVisibility = (routeName) => {
-    const hiddenRoutes = ["Login"];
+    const hiddenRoutes = [
+      "Login",
+      "ForgotPassword",
+      "OTPInput",
+      "UpdatePassword",
+    ]; // Mảng chứa các route cần ẩn footer
     setShowFooter(!hiddenRoutes.includes(routeName));
   };
 

@@ -18,6 +18,7 @@ import URL from "../midleware/authMidleware"; // Adjust the import as necessary
 
 import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Icons from "react-native-vector-icons/MaterialIcons";
 import { fetchTaskByIdProject, updateProjectStatus } from "../api/taskService";
 import Generate from "../CSS/Generate";
 import styles from "../CSS/ManageTask";
@@ -305,6 +306,8 @@ const Manage_task_status_member = ({ navigation }) => {
                 Generate.box_status_progress,
                 Generate.box_status_progress,
                 Generate.box,
+                Generate.marginVertical,
+                Generate.textCenter,
               ]}
             >
               Verify
@@ -319,8 +322,11 @@ const Manage_task_status_member = ({ navigation }) => {
         {/* Render error message if exists */}
         {error && <Text style={{ color: "red" }}>{error}</Text>}
         {tasks.length === 0 ? (
-          <View style={{ padding: 20, alignItems: "center" }}>
-            <Text style={{ fontSize: 16, color: "red" }}>No tasks.</Text>
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Icons name="assignment" size={50} color="#ccc" />
+            <Text style={{ fontSize: 18, color: "#aaa", marginTop: 10 }}>
+              No project available
+            </Text>
           </View>
         ) : (
           <FlatList

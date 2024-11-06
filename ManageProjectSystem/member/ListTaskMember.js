@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Thay đổi bộ icon tùy ý
+import Icon from "react-native-vector-icons/MaterialIcons"; // Import Material Icons
 import { fetchTaskByIdInvite } from "../api/inviteService";
 import { updateTaskStatus } from "../api/taskService";
 import Generate from "../CSS/Generate";
@@ -26,13 +26,10 @@ const ListTask = ({ navigation }) => {
   const [status, setStatus] = useState("Ongoing");
 
   const handleUpdateStatus = async (id) => {
-    console.log("====================================");
     console.log(id, status);
-    console.log("====================================");
     try {
       const updatedTask = await updateTaskStatus(id, status);
       if (updatedTask) {
-        // Cập nhật giao diện hoặc thông báo thành công cho người dùng
         console.log("Updated task:", updatedTask);
         Alert.alert(
           "Task Updated",
@@ -40,7 +37,6 @@ const ListTask = ({ navigation }) => {
         );
       }
     } catch (error) {
-      // Xử lý lỗi, có thể thông báo cho người dùng
       console.error("Failed to update task status:", error);
       Alert.alert(
         "Update Failed",
@@ -63,44 +59,34 @@ const ListTask = ({ navigation }) => {
   }, []);
 
   const task = async (inviteId) => {
-    // Check if inviteId is provided
-    console.log(inviteId);
-
     if (!inviteId) {
       console.error("Invite ID is null or undefined. Skipping task fetch.");
       setError("Invalid Invite ID.");
-      return; // Exit function early if inviteId is missing
+      return;
     }
 
     setLoading(true);
-    setRefreshing(true); // Start refreshing state
+    setRefreshing(true);
 
     try {
-      const taskData = await fetchTaskByIdInvite(inviteId); // Fetch task data by inviteId
-      if (Array.isArray(taskData)) {
-        setTasks(taskData); // Set tasks if taskData is an array
-      } else {
-        console.warn("Unexpected response format:", taskData);
-        setTasks([]); // Fallback to empty array if data is not an array
-      }
-      console.log("Fetched Task Data:", taskData); // Debugging info
+      const taskData = await fetchTaskByIdInvite(inviteId);
+      setTasks(Array.isArray(taskData) ? taskData : []);
     } catch (err) {
-      console.error("Error chung fetching tasks:", err.message || err);
-
+      console.error("Error fetching tasks:", err.message || err);
       setError(
         err.message || "An unknown error occurred while fetching tasks."
       );
     } finally {
-      setLoading(false); // Mark loading as complete
-      setRefreshing(false); // End refreshing state
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     if (id) {
-      task(id); // Gọi hàm để lấy dữ liệu khi id đã được thiết lập
+      task(id);
     }
-  }, [id]); // Chạy khi id thay đổi
+  }, [id]);
 
   const renderItem = ({ item }) => {
     const startDateLocal = item.startDate
@@ -168,7 +154,7 @@ const ListTask = ({ navigation }) => {
                   ? styles.box_status_progress
                   : item.status === "Done"
                   ? [styles.box_status_done]
-                  : null, // Nếu không thuộc các trạng thái trên, không áp dụng kiểu nào              ]}
+                  : null,
               ]}
             >
               <Text style={[styles.point, styles.point_progress]}></Text>
@@ -181,7 +167,7 @@ const ListTask = ({ navigation }) => {
                     ? styles.color_ongoing
                     : item.status === "Done"
                     ? [styles.color_done]
-                    : null, // Nếu không
+                    : null,
                   styles.font_size_content,
                 ]}
               >
@@ -195,7 +181,6 @@ const ListTask = ({ navigation }) => {
                 <Text
                   style={[
                     styles.font_size_content,
-                    Generate.box_status_notstarted,
                     Generate.box_status_notstarted,
                     Generate.box,
                   ]}
@@ -214,17 +199,26 @@ const ListTask = ({ navigation }) => {
     <SafeAreaView style={[styles.main]}>
       <View style={[styles.form_create_task]}>
         {error && <Text style={{ color: "red" }}>{error}</Text>}
-        <FlatList
-          data={tasks}
-          renderItem={renderItem}
-          keyExtractor={(item) => item._id}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing} // Trạng thái refreshing
-              onRefresh={() => task(id)} // Gọi lại với id hiện tại
-            />
-          }
-        />
+        {tasks.length === 0 ? ( // Check if there are no tasks
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Icon name="assignment" size={50} color="#ccc" />
+            <Text style={{ fontSize: 18, color: "#aaa", marginTop: 10 }}>
+              No tasks available
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={tasks}
+            renderItem={renderItem}
+            keyExtractor={(item) => item._id}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => task(id)}
+              />
+            }
+          />
+        )}
       </View>
     </SafeAreaView>
   );

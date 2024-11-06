@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import HomeManager from "../admin/Home";
 import { fetchAccount } from "../api/apiservice";
+import URL from "../midleware/authMidleware";
 
 const Manager = () => {
   const navigation = useNavigation();
@@ -133,20 +134,20 @@ const Manager = () => {
 
         <View style={styles.titleContainer}>
           <Ionicons name="people-outline" size={24} style={styles.icon} />
-          <Text style={styles.projectTitle}>
-            {data ? data.fullName : "No data available"}
-          </Text>
+          <Text style={styles.projectTitle}>{data?.fullName || "N/A"}</Text>
         </View>
 
         <TouchableOpacity>
-          {data && data.avatar && (
-            <Image
-              source={{
-                uri: `http://192.168.1.3:5000/${data.avatar}`,
-              }}
-              style={styles.avatar}
-            />
-          )}
+          <Image
+            source={
+              data && data.avatar
+                ? {
+                    uri: `http://${URL.BASE_URL}:5000/${data.avatar}`,
+                  }
+                : require("../assets/images.png") // Fallback to a default image
+            }
+            style={styles.avatar}
+          />
         </TouchableOpacity>
       </View>
 

@@ -102,7 +102,7 @@ const getAllCalendaring = async (req, res) => {
   try {
     // Tìm kiếm trong cơ sở dữ liệu với startDate trong khoảng thời gian
     const calendarData = await Calendaring.find().populate("createrBy");
-    res.status(200).json(calendarData);
+    return res.status(200).json(calendarData || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error fetching calendar data:", error);
     res.status(500).json({ error: "Failed to fetch calendar data" });

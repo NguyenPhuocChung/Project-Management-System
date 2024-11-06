@@ -103,7 +103,7 @@ const register = async (req, res) => {
         .json({ message: "User with this email already exists" });
     }
 
-    // Mã hóa mật khẩu trước khi lưu
+    // Mã hóa mật khẩu tước khi lưu
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Tạo người dùng mới

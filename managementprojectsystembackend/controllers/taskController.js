@@ -56,13 +56,7 @@ const addTask = [
 const findAllTasks = async (req, res) => {
   try {
     const tasks = await Task.find().populate("invite");
-    // Lấy tất cả các tác vụ
-    res.status(200).json(tasks); // Trả về danh sách tác vụ
-    if (!tasks || tasks.length === 0) {
-      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
-      return res.status(200).json({ message: "No tasks found", tasks: [] });
-    }
-    console.log(tasks); // In danh sách tác vụ ra màn hình
+    return res.status(200).json(tasks || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error finding tasks:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -76,13 +70,7 @@ const findAllTasksById = async (req, res) => {
       .populate("invite", "fullName")
       .populate("createrBy", "fullName");
 
-    // Lấy tất cả các tác vụ
-    if (!tasks || tasks.length === 0) {
-      // Trả về mã 200 với thông báo rằng không có project nào được tìm thấy
-      return res.status(200).json({ message: "No tasks found", tasks: [] });
-    }
-    res.status(200).json(tasks); // Trả về danh sách tác vụ
-    console.log(tasks); // In danh sách tác vụ ra màn hình
+    return res.status(200).json(tasks || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error finding tasks:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -127,10 +115,7 @@ const findAllTasksByProjectId = async (req, res) => {
     const tasks = await Task.find({ projectId })
       .populate("invite")
       .populate("createrBy"); // Chỉnh sửa để tìm theo projectId
-    res.status(200).json(tasks); // Trả về danh sách tác vụ
-    console.log("====================================");
-    console.log(tasks);
-    console.log("====================================");
+    return res.status(200).json(tasks || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error finding tasks:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -144,14 +129,7 @@ const getTasksByInvite = async (req, res) => {
     const TaskS = await Task.find({ invite: inviteId })
       .populate("createrBy", "fullName")
       .populate("invite", "fullName");
-
-    if (!TaskS || TaskS.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No projects found for this invite." });
-    }
-
-    res.status(200).json(TaskS);
+    return res.status(200).json(TaskS || []); // Ensure tasks is always an array
   } catch (error) {
     console.error("Error fetching projects by invite:", error);
     res
